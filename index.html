@@ -1769,101 +1769,123 @@
         }
 
         async function signup() {
-            const nickname = document.getElementById('signupNickname').value.trim();
-            const password = document.getElementById('signupPassword').value;
-            const confirm = document.getElementById('signupConfirm').value;
+            try {
+                const nickname = document.getElementById('signupNickname').value.trim();
+                const password = document.getElementById('signupPassword').value;
+                const confirm = document.getElementById('signupConfirm').value;
 
-            if (!nickname || !password) {
-                showToast('PLEASE FILL ALL FIELDS', true);
-                return;
+                if (!nickname || !password) {
+                    showToast('PLEASE FILL ALL FIELDS', true);
+                    return;
+                }
+
+                if (password.length < 4) {
+                    showToast('PASSWORD TOO SHORT (MIN 4 CHARS)', true);
+                    return;
+                }
+
+                if (password !== confirm) {
+                    showToast('PASSWORDS DO NOT MATCH', true);
+                    return;
+                }
+
+                // Check if bcrypt is loaded
+                if (typeof bcrypt === 'undefined') {
+                    showToast('LOADING... PLEASE TRY AGAIN', true);
+                    return;
+                }
+
+                // Check if nickname exists
+                const { data: existing } = await sbClient
+                    .from(USERS_TABLE)
+                    .select('nickname')
+                    .eq('nickname', nickname)
+                    .single();
+
+                if (existing) {
+                    showToast('USERNAME ALREADY TAKEN', true);
+                    return;
+                }
+
+                // Hash the password before storing
+                showToast('CREATING ACCOUNT...');
+                const saltRounds = 10;
+                const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+                // Create account with hashed password
+                const { error } = await sbClient
+                    .from(USERS_TABLE)
+                    .insert([{ nickname, password: hashedPassword }]);
+
+                if (error) {
+                    console.error('Signup error:', error);
+                    showToast('SIGNUP FAILED', true);
+                    return;
+                }
+
+                showToast('ACCOUNT CREATED! PLEASE LOGIN');
+                document.getElementById('signupNickname').value = '';
+                document.getElementById('signupPassword').value = '';
+                document.getElementById('signupConfirm').value = '';
+                switchTab('login');
+            } catch (err) {
+                console.error('Signup error:', err);
+                showToast('SIGNUP FAILED. TRY AGAIN', true);
             }
-
-            if (password.length < 4) {
-                showToast('PASSWORD TOO SHORT (MIN 4 CHARS)', true);
-                return;
-            }
-
-            if (password !== confirm) {
-                showToast('PASSWORDS DO NOT MATCH', true);
-                return;
-            }
-
-            // Check if nickname exists
-            const { data: existing } = await sbClient
-                .from(USERS_TABLE)
-                .select('nickname')
-                .eq('nickname', nickname)
-                .single();
-
-            if (existing) {
-                showToast('USERNAME ALREADY TAKEN', true);
-                return;
-            }
-
-            // Hash the password before storing
-            showToast('CREATING ACCOUNT...');
-            const saltRounds = 10;
-            const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-            // Create account with hashed password
-            const { error } = await sbClient
-                .from(USERS_TABLE)
-                .insert([{ nickname, password: hashedPassword }]);
-
-            if (error) {
-                console.error('Signup error:', error);
-                showToast('SIGNUP FAILED', true);
-                return;
-            }
-
-            showToast('ACCOUNT CREATED! PLEASE LOGIN');
-            document.getElementById('signupNickname').value = '';
-            document.getElementById('signupPassword').value = '';
-            document.getElementById('signupConfirm').value = '';
-            switchTab('login');
         }
 
         async function login() {
-            const nickname = document.getElementById('loginNickname').value.trim();
-            const password = document.getElementById('loginPassword').value;
-            const rememberMe = document.getElementById('rememberMe').checked;
+            try {
+                const nickname = document.getElementById('loginNickname').value.trim();
+                const password = document.getElementById('loginPassword').value;
+                const rememberMe = document.getElementById('rememberMe').checked;
 
-            if (!nickname || !password) {
-                showToast('PLEASE ENTER CREDENTIALS', true);
-                return;
+                if (!nickname || !password) {
+                    showToast('PLEASE ENTER CREDENTIALS', true);
+                    return;
+                }
+
+                // Check if bcrypt is loaded
+                if (typeof bcrypt === 'undefined') {
+                    showToast('LOADING... PLEASE TRY AGAIN', true);
+                    return;
+                }
+
+                // Get user by nickname
+                const { data: user, error } = await sbClient
+                    .from(USERS_TABLE)
+                    .select('*')
+                    .eq('nickname', nickname)
+                    .single();
+
+                if (error || !user) {
+                    showToast('INVALID CREDENTIALS', true);
+                    return;
+                }
+
+                // Compare password with hashed password
+                const passwordMatch = await bcrypt.compare(password, user.password);
+
+                if (!passwordMatch) {
+                    showToast('INVALID CREDENTIALS', true);
+                    return;
+                }
+
+                currentUser = user;
+                
+                // Save to localStorage if "Remember Me" is checked, otherwise sessionStorage
+                if (rememberMe) {
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    localStorage.setItem('rememberMe', 'true');
+                } else {
+                    sessionStorage.setItem('currentUser', JSON.stringify(user));
+                }
+                
+                startDecryption();
+            } catch (err) {
+                console.error('Login error:', err);
+                showToast('LOGIN FAILED. TRY AGAIN', true);
             }
-
-            // Get user by nickname
-            const { data: user, error } = await sbClient
-                .from(USERS_TABLE)
-                .select('*')
-                .eq('nickname', nickname)
-                .single();
-
-            if (error || !user) {
-                showToast('INVALID CREDENTIALS', true);
-                return;
-            }
-
-            // Compare password with hashed password
-            const passwordMatch = await bcrypt.compare(password, user.password);
-
-            if (!passwordMatch) {
-                showToast('INVALID CREDENTIALS', true);
-                return;
-            }
-
-            currentUser = user;
-            
-            // Save to localStorage if "Remember Me" is checked, otherwise sessionStorage
-            if (rememberMe) {
-                localStorage.setItem('currentUser', JSON.stringify(user));
-                localStorage.setItem('rememberMe', 'true');
-            } else {
-                sessionStorage.setItem('currentUser', JSON.stringify(user));
-            }
-            
-            startDecryption();
         }
 
         function logout() {
