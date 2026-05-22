@@ -1621,6 +1621,7 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
     <script>
         const SUPABASE_URL = "https://rwlsfwvtldlvhpoiylpi.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ3bHNmd3Z0bGRsdmhwb2l5bHBpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzNTYwNDcsImV4cCI6MjA5MzkzMjA0N30.qAi4YCWFml4csA3VtpdnUhniKkUi3OZTAIdI716aUNg";
@@ -1794,10 +1795,15 @@
                 return;
             }
 
-            // Create account
+            // Hash the password before storing
+            showToast('CREATING ACCOUNT...');
+            const saltRounds = 10;
+            const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+            // Create account with hashed password
             const { error } = await sbClient
                 .from(USERS_TABLE)
-                .insert([{ nickname, password }]);
+                .insert([{ nickname, password: hashedPassword }]);
 
             if (error) {
                 console.error('Signup error:', error);
@@ -1822,14 +1828,22 @@
                 return;
             }
 
+            // Get user by nickname
             const { data: user, error } = await sbClient
                 .from(USERS_TABLE)
                 .select('*')
                 .eq('nickname', nickname)
-                .eq('password', password)
                 .single();
 
             if (error || !user) {
+                showToast('INVALID CREDENTIALS', true);
+                return;
+            }
+
+            // Compare password with hashed password
+            const passwordMatch = await bcrypt.compare(password, user.password);
+
+            if (!passwordMatch) {
                 showToast('INVALID CREDENTIALS', true);
                 return;
             }
