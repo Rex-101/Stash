@@ -1181,8 +1181,8 @@
                                 <path d="M8.59 13.51L15.42 17.49" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 <path d="M15.41 6.51L8.59 10.49" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
-                            <span id="notificationBadge" style="display: none; position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; border-radius: 50%; width: 22px; height: 22px; font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(212, 93, 93, 0.5);">0</span>
                         </button>
+                        <span id="notificationBadge" style="display: none; position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; border-radius: 50%; width: 22px; height: 22px; font-size: 0.7rem; font-weight: 700; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(212, 93, 93, 0.5);">0</span>
                     </div>
                     <span style="color: var(--primary); font-size: 0.9rem; letter-spacing: 2px; font-family: 'Courier Prime', monospace;" id="userDisplay">USER: REX</span>
                     <button class="btn btn-secondary" onclick="logout()">LOGOUT</button>
@@ -1601,9 +1601,12 @@
             const countText = dropsToRender.length === 1 ? '1 STASH' : `${dropsToRender.length} STASHES`;
             document.getElementById('stashCount').textContent = countText;
             
-            // Get unopened stashes
-            const unopenedKey = `unopened_${currentUser.id}`;
-            const unopened = JSON.parse(localStorage.getItem(unopenedKey) || '[]');
+            // Get unopened stashes (only if user is logged in)
+            let unopened = [];
+            if (currentUser) {
+                const unopenedKey = `unopened_${currentUser.id}`;
+                unopened = JSON.parse(localStorage.getItem(unopenedKey) || '[]');
+            }
             
             if (dropsToRender.length === 0) {
                 let emptyMessage = 'YOUR STASH IS EMPTY';
@@ -1730,11 +1733,20 @@
             document.getElementById('shareContent').style.display = 'block';
             document.getElementById('shareToggleIcon').textContent = '▼';
             
-            // Hide share section if this is a shared drop (not owned by user)
+            // Hide/show buttons based on ownership
+            const editBtn = document.getElementById('editBtn');
+            const deleteBtn = document.getElementById('deleteBtn');
             const shareSection = document.querySelector('.share-section');
+            
             if (currentDrop.shared) {
+                // Hide edit, delete, and share section for shared drops
+                editBtn.style.display = 'none';
+                deleteBtn.style.display = 'none';
                 shareSection.style.display = 'none';
             } else {
+                // Show all buttons for own drops
+                editBtn.style.display = 'block';
+                deleteBtn.style.display = 'block';
                 shareSection.style.display = 'block';
                 loadShareHistory();
             }
@@ -2098,9 +2110,13 @@
         }
 
         function updateNotificationBadge() {
+            if (!currentUser) return;
+            
             const unopenedKey = `unopened_${currentUser.id}`;
             const unopened = JSON.parse(localStorage.getItem(unopenedKey) || '[]');
             const badge = document.getElementById('notificationBadge');
+            
+            if (!badge) return;
             
             if (unopened.length > 0) {
                 badge.textContent = unopened.length;
