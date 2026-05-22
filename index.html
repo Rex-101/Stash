@@ -1,3 +1,4 @@
+﻿<<<<<<< HEAD
 ﻿<html lang="en"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1494,6 +1495,15 @@
             document.getElementById('userDisplay').textContent = `USER: ${currentUser.nickname.toUpperCase()}`;
             loadDrops();
             subscribeToRealtime();
+            
+            // Request notification permission
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        showToast('NOTIFICATIONS ENABLED');
+                    }
+                });
+            }
         }
 
         async function loadDrops() {
@@ -1913,6 +1923,7 @@
         }
 
         function subscribeToRealtime() {
+            // Subscribe to own drops changes
             sbClient.channel('drops-changes')
                 .on('postgres_changes', { 
                     event: '*', 
@@ -1921,6 +1932,68 @@
                     filter: `user_id=eq.${currentUser.id}`
                 }, () => loadDrops())
                 .subscribe();
+            
+            // Subscribe to shared drops (when someone shares with you)
+            sbClient.channel('shared-drops-changes')
+                .on('postgres_changes', { 
+                    event: 'INSERT', 
+                    schema: 'public', 
+                    table: SHARES_TABLE,
+                    filter: `shared_with_user_id=eq.${currentUser.id}`
+                }, async (payload) => {
+                    console.log('New share received:', payload);
+                    
+                    // Get the drop details and owner info
+                    const { data: shareData } = await sbClient
+                        .from(SHARES_TABLE)
+                        .select(`
+                            drops:drop_id (label, text),
+                            owner:owner_user_id (nickname)
+                        `)
+                        .eq('id', payload.new.id)
+                        .single();
+                    
+                    if (shareData) {
+                        const fromUser = shareData.owner?.nickname || 'Someone';
+                        const stashLabel = shareData.drops?.label || 'a stash';
+                        
+                        // Show notification
+                        showStashNotification(fromUser, stashLabel);
+                    }
+                    
+                    // Reload drops to show the new shared stash
+                    loadDrops();
+                })
+                .subscribe();
+        }
+
+        async function showStashNotification(fromUser, stashLabel) {
+            // Request permission if not already granted
+            if ('Notification' in window && Notification.permission === 'default') {
+                await Notification.requestPermission();
+            }
+
+            if ('Notification' in window && Notification.permission === 'granted') {
+                const title = '📤 New Stash Received';
+                const options = {
+                    body: `${fromUser} shared "${stashLabel}" with you`,
+                    icon: '/icon-192.svg',
+                    badge: '/icon-192.svg',
+                    tag: 'stash-notification',
+                    requireInteraction: false,
+                    vibrate: [200, 100, 200]
+                };
+
+                if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                    // Use service worker to show notification
+                    navigator.serviceWorker.ready.then(registration => {
+                        registration.showNotification(title, options);
+                    });
+                } else {
+                    // Fallback to regular notification
+                    new Notification(title, options);
+                }
+            }
         }
 
         function showToast(message, isError) {
@@ -2043,12 +2116,3 @@
 				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
 			}
 		})();
-	}
-	else {
-		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
-	}
-	// ]]>
-</script>
-
-
-</body><chatgpt-sidebar data-rendered="true" data-gpts-theme="light"></chatgpt-sidebar></html>
