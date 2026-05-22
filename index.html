@@ -261,6 +261,32 @@
             color: var(--bg-dark);
         }
 
+        .landing-footer {
+            margin-top: 60px;
+            padding: 30px 20px;
+            text-align: center;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .landing-credit {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            font-family: 'Courier Prime', monospace;
+        }
+
+        .landing-credit a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+
+        .landing-credit a:hover {
+            color: var(--accent);
+            text-shadow: 0 0 10px rgba(201, 184, 122, 0.5);
+        }
+
         @media (max-width: 768px) {
             .landing-wordmark h1 {
                 font-size: 3rem;
@@ -284,6 +310,15 @@
             .cta-btn {
                 padding: 15px 40px;
                 font-size: 0.9rem;
+            }
+
+            .landing-footer {
+                margin-top: 40px;
+                padding: 20px;
+            }
+
+            .landing-credit {
+                font-size: 0.8rem;
             }
         }
 
@@ -1378,6 +1413,12 @@
             <div class="landing-cta">
                 <button class="cta-btn" onclick="goToApp()">GET STARTED</button>
                 <button class="cta-btn cta-btn-secondary" onclick="goToApp()">SIGN IN</button>
+            </div>
+        </div>
+        
+        <div class="landing-footer">
+            <div class="landing-credit">
+                Built by <a href="https://github.com/Rex-101" target="_blank" rel="noopener noreferrer">Rex - Rexence</a>
             </div>
         </div>
     </div>
