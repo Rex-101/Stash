@@ -65,6 +65,216 @@
             z-index: 1; 
         }
 
+        /* ════════════════════════════════
+           LANDING PAGE STYLES
+           ════════════════════════════════ */
+        
+        #landingPage {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        #landingPage.hidden { display: none; }
+
+        .landing-hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 90vh;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .landing-logo-large {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .landing-logo-mark {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .landing-logo-mark-bg {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #1e1d1a, #161514);
+            border-radius: 20px;
+            border: 2px solid var(--border);
+        }
+
+        .landing-logo-mark-inner {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .landing-drop-line {
+            width: 3px;
+            height: 20px;
+            background: linear-gradient(to bottom, transparent, var(--primary));
+            border-radius: 2px;
+        }
+
+        .landing-drop-arrow {
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 12px solid var(--primary);
+            filter: drop-shadow(0 0 8px rgba(201, 184, 122, 0.6));
+        }
+
+        .landing-drop-shelf {
+            width: 32px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+            box-shadow: 0 0 12px rgba(201, 184, 122, 0.4);
+        }
+
+        .landing-wordmark h1 {
+            font-size: 5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin: 0;
+            background: linear-gradient(135deg, var(--text-primary), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .landing-tagline {
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 50px;
+            font-family: 'Courier Prime', monospace;
+        }
+
+        .landing-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+            max-width: 900px;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 30px rgba(201, 184, 122, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .feature-desc {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.9rem;
+        }
+
+        .landing-cta {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-btn {
+            padding: 18px 50px;
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            background: var(--primary);
+            color: var(--bg-dark);
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-btn:hover {
+            background: transparent;
+            color: var(--primary);
+            box-shadow: 0 0 30px rgba(201, 184, 122, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .cta-btn-secondary {
+            background: transparent;
+            color: var(--primary);
+        }
+
+        .cta-btn-secondary:hover {
+            background: var(--primary);
+            color: var(--bg-dark);
+        }
+
+        @media (max-width: 768px) {
+            .landing-wordmark h1 {
+                font-size: 3rem;
+            }
+
+            .landing-tagline {
+                font-size: 1rem;
+                letter-spacing: 2px;
+            }
+
+            .landing-features {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .landing-logo-mark {
+                width: 60px;
+                height: 60px;
+            }
+
+            .cta-btn {
+                padding: 15px 40px;
+                font-size: 0.9rem;
+            }
+        }
+
         #lockScreen {
             display: flex;
             flex-direction: column;
@@ -1096,6 +1306,52 @@
         }
 </style></head>
 <body>
+    <!-- Landing Page (Website Only) -->
+    <div id="landingPage">
+        <div class="landing-hero">
+            <div class="landing-logo-large">
+                <div class="landing-logo-mark">
+                    <div class="landing-logo-mark-bg"></div>
+                    <div class="landing-logo-mark-inner">
+                        <div class="landing-drop-line"></div>
+                        <div class="landing-drop-arrow"></div>
+                        <div class="landing-drop-shelf"></div>
+                    </div>
+                </div>
+                <div class="landing-wordmark">
+                    <h1>STASH</h1>
+                </div>
+            </div>
+            
+            <p class="landing-tagline">Save here. Access everywhere.</p>
+            
+            <div class="landing-features">
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <div class="feature-title">Secure Storage</div>
+                    <div class="feature-desc">Your data is encrypted and stored securely in the cloud. Access it from anywhere, anytime.</div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <div class="feature-title">Real-Time Sync</div>
+                    <div class="feature-desc">Changes sync instantly across all your devices. Never lose your important notes again.</div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <div class="feature-title">Easy Sharing</div>
+                    <div class="feature-desc">Share your stashes with friends and colleagues. Collaborate seamlessly in real-time.</div>
+                </div>
+            </div>
+            
+            <div class="landing-cta">
+                <button class="cta-btn" onclick="goToApp()">GET STARTED</button>
+                <button class="cta-btn cta-btn-secondary" onclick="goToApp()">SIGN IN</button>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <div id="lockScreen">
             <svg class="lock-svg" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
@@ -1274,10 +1530,36 @@
         window.addEventListener('DOMContentLoaded', () => {
             sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             setupEventListeners();
+            checkLandingPage();
             checkSession();
             registerServiceWorker();
             setupInstallPrompt();
         });
+
+        function checkLandingPage() {
+            // Check if running as PWA (standalone mode)
+            const isPWA = window.matchMedia('(display-mode: standalone)').matches || 
+                          window.navigator.standalone === true;
+            
+            const landingPage = document.getElementById('landingPage');
+            const lockScreen = document.getElementById('lockScreen');
+            
+            if (isPWA) {
+                // Hide landing page in PWA, show lock screen
+                landingPage.classList.add('hidden');
+                lockScreen.classList.remove('hidden');
+            } else {
+                // Show landing page on website
+                landingPage.classList.remove('hidden');
+                lockScreen.classList.add('hidden');
+            }
+        }
+
+        function goToApp() {
+            // Hide landing page and show lock screen
+            document.getElementById('landingPage').classList.add('hidden');
+            document.getElementById('lockScreen').classList.remove('hidden');
+        }
 
         function registerServiceWorker() {
             if ('serviceWorker' in navigator) {
@@ -1352,6 +1634,9 @@
             const savedUser = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
             if (savedUser) {
                 currentUser = JSON.parse(savedUser);
+                // Hide landing page if user is logged in
+                document.getElementById('landingPage').classList.add('hidden');
+                document.getElementById('lockScreen').classList.add('hidden');
                 showMainApp();
             }
         }
