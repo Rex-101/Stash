@@ -728,6 +728,43 @@
             to { opacity: 1; }
         }
 
+        @keyframes notificationPulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 10px rgba(212, 93, 93, 0.5);
+            }
+            50% {
+                transform: scale(1.2);
+                box-shadow: 0 0 20px rgba(212, 93, 93, 0.8);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 10px rgba(212, 93, 93, 0.5);
+            }
+        }
+
+        @keyframes notificationPop {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.3);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .notification-pulse {
+            animation: notificationPulse 1s ease-in-out infinite;
+        }
+
+        .notification-pop {
+            animation: notificationPop 0.5s ease-out;
+        }
+
         header {
             display: flex;
             justify-content: space-between;
@@ -2021,6 +2058,11 @@
         function filterByType(type) {
             currentFilter = type;
             
+            // Remove pulse animation when user views shared stashes
+            if (type === 'shared') {
+                removeNotificationPulse();
+            }
+            
             // Update active tab
             document.querySelectorAll('.filter-tab').forEach(tab => {
                 tab.classList.remove('active');
@@ -2453,7 +2495,7 @@
             if (!unopened.includes(dropId)) {
                 unopened.push(dropId);
                 localStorage.setItem(unopenedKey, JSON.stringify(unopened));
-                updateNotificationBadge();
+                updateNotificationBadge(true); // true = new notification
             }
         }
 
@@ -2462,10 +2504,10 @@
             let unopened = JSON.parse(localStorage.getItem(unopenedKey) || '[]');
             unopened = unopened.filter(id => id !== dropId);
             localStorage.setItem(unopenedKey, JSON.stringify(unopened));
-            updateNotificationBadge();
+            updateNotificationBadge(false);
         }
 
-        function updateNotificationBadge() {
+        function updateNotificationBadge(isNewNotification = false) {
             if (!currentUser) return;
             
             const unopenedKey = `unopened_${currentUser.id}`;
@@ -2477,8 +2519,29 @@
             if (unopened.length > 0) {
                 badge.textContent = unopened.length;
                 badge.style.display = 'flex';
+                
+                // Add pulse animation for new notifications
+                if (isNewNotification) {
+                    badge.classList.add('notification-pop');
+                    badge.classList.add('notification-pulse');
+                    
+                    // Remove pop animation after it completes
+                    setTimeout(() => {
+                        badge.classList.remove('notification-pop');
+                    }, 500);
+                    
+                    // Keep pulse animation until user checks
+                }
             } else {
                 badge.style.display = 'none';
+                badge.classList.remove('notification-pulse');
+            }
+        }
+
+        function removeNotificationPulse() {
+            const badge = document.getElementById('notificationBadge');
+            if (badge) {
+                badge.classList.remove('notification-pulse');
             }
         }
 
