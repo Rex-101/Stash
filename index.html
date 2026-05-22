@@ -188,8 +188,20 @@
         }
 
         .feature-icon {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .feature-icon svg {
+            filter: drop-shadow(0 0 10px rgba(201, 184, 122, 0.3));
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover .feature-icon svg {
+            filter: drop-shadow(0 0 20px rgba(201, 184, 122, 0.6));
+            transform: scale(1.1);
         }
 
         .feature-title {
@@ -1327,19 +1339,37 @@
             
             <div class="landing-features">
                 <div class="feature-card">
-                    <div class="feature-icon">🔒</div>
+                    <div class="feature-icon">
+                        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="5" y="11" width="14" height="10" rx="2" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 17C12.5523 17 13 16.5523 13 16C13 15.4477 12.5523 15 12 15C11.4477 15 11 15.4477 11 16C11 16.5523 11.4477 17 12 17Z" fill="var(--primary)"/>
+                            <path d="M8 11V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V11" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
                     <div class="feature-title">Secure Storage</div>
                     <div class="feature-desc">Your data is encrypted and stored securely in the cloud. Access it from anywhere, anytime.</div>
                 </div>
                 
                 <div class="feature-card">
-                    <div class="feature-icon">🔄</div>
+                    <div class="feature-icon">
+                        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21.5 2V8M21.5 8H15.5M21.5 8L18 4.5C16.5 3 14.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22C17 22 21.5 18 21.5 13" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="12" cy="12" r="3" stroke="var(--primary)" stroke-width="2"/>
+                        </svg>
+                    </div>
                     <div class="feature-title">Real-Time Sync</div>
                     <div class="feature-desc">Changes sync instantly across all your devices. Never lose your important notes again.</div>
                 </div>
                 
                 <div class="feature-card">
-                    <div class="feature-icon">👥</div>
+                    <div class="feature-icon">
+                        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="9" cy="7" r="4" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2 21V19C2 16.7909 3.79086 15 6 15H12C14.2091 15 16 16.7909 16 19V21" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M16 11C17.6569 11 19 9.65685 19 8C19 6.34315 17.6569 5 16 5" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M19 15C20.6569 15 22 16.3431 22 18V21" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
                     <div class="feature-title">Easy Sharing</div>
                     <div class="feature-desc">Share your stashes with friends and colleagues. Collaborate seamlessly in real-time.</div>
                 </div>
