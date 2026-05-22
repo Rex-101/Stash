@@ -2642,8 +2642,8 @@
             // Handle install button clicks
             const handleInstallClick = async () => {
                 if (!deferredPrompt) {
-                    // If no install prompt available, show instructions
-                    showToast('TO INSTALL: Tap browser menu ? "Add to Home Screen" or "Install App"');
+                    // Show detailed installation instructions based on device
+                    showInstallInstructions();
                     return;
                 }
                 // Show the install prompt
@@ -2669,6 +2669,96 @@
                 installBtnLock.style.display = 'none';
                 deferredPrompt = null;
                 showToast('APP INSTALLED SUCCESSFULLY');
+            });
+        }
+
+        function showInstallInstructions() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            const isIOS = /iphone|ipad|ipod/.test(userAgent);
+            const isAndroid = /android/.test(userAgent);
+            const isSafari = /safari/.test(userAgent) && !/chrome/.test(userAgent);
+            const isChrome = /chrome/.test(userAgent);
+            
+            let instructions = '';
+            
+            if (isIOS || isSafari) {
+                // iOS Safari instructions
+                instructions = `
+                    <div style="text-align: left; line-height: 1.8;">
+                        <div style="font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: var(--primary);">📱 INSTALL ON iOS/SAFARI</div>
+                        <div style="margin-bottom: 10px;">1. Tap the <strong>Share</strong> button (square with arrow)</div>
+                        <div style="margin-bottom: 10px;">2. Scroll down and tap <strong>"Add to Home Screen"</strong></div>
+                        <div style="margin-bottom: 10px;">3. Tap <strong>"Add"</strong> in the top right</div>
+                        <div style="margin-top: 15px; color: var(--text-secondary); font-size: 0.9rem;">The app icon will appear on your home screen!</div>
+                    </div>
+                `;
+            } else if (isAndroid || isChrome) {
+                // Android Chrome instructions
+                instructions = `
+                    <div style="text-align: left; line-height: 1.8;">
+                        <div style="font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: var(--primary);">📱 INSTALL ON ANDROID/CHROME</div>
+                        <div style="margin-bottom: 10px;">1. Tap the <strong>Menu</strong> button (⋮ three dots)</div>
+                        <div style="margin-bottom: 10px;">2. Tap <strong>"Add to Home screen"</strong> or <strong>"Install app"</strong></div>
+                        <div style="margin-bottom: 10px;">3. Tap <strong>"Install"</strong> or <strong>"Add"</strong></div>
+                        <div style="margin-top: 15px; color: var(--text-secondary); font-size: 0.9rem;">The app will be installed on your device!</div>
+                    </div>
+                `;
+            } else {
+                // Generic instructions
+                instructions = `
+                    <div style="text-align: left; line-height: 1.8;">
+                        <div style="font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: var(--primary);">📱 INSTALL APP</div>
+                        <div style="margin-bottom: 10px;">1. Open your browser menu</div>
+                        <div style="margin-bottom: 10px;">2. Look for <strong>"Add to Home Screen"</strong> or <strong>"Install"</strong></div>
+                        <div style="margin-bottom: 10px;">3. Follow the prompts to install</div>
+                        <div style="margin-top: 15px; color: var(--text-secondary); font-size: 0.9rem;">The app will be available on your device!</div>
+                    </div>
+                `;
+            }
+            
+            // Create modal overlay
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(14, 14, 15, 0.95);
+                z-index: 10000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+                animation: fadeIn 0.3s ease;
+            `;
+            
+            const content = document.createElement('div');
+            content.style.cssText = `
+                background: var(--bg-card);
+                max-width: 500px;
+                width: 100%;
+                padding: 30px;
+                border-radius: 12px;
+                border: 1px solid var(--border);
+                box-shadow: 0 0 40px rgba(201, 184, 122, 0.3);
+                font-family: 'Courier Prime', monospace;
+            `;
+            
+            content.innerHTML = instructions + `
+                <button class="btn" style="width: 100%; margin-top: 20px;" onclick="this.closest('div[style*=fixed]').remove()">
+                    GOT IT
+                </button>
+            `;
+            
+            modal.appendChild(content);
+            document.body.appendChild(modal);
+            
+            // Close on background click
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                }
             });
         }
     </script>
