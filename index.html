@@ -1239,7 +1239,7 @@
             <div class="share-section" style="display: block;">
                 <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 10px 0;" onclick="toggleShareSection()">
                     <div style="color: var(--primary); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; font-family: 'Syne', sans-serif; font-weight: 600;">SHARE WITH USER</div>
-                    <span id="shareToggleIcon" style="color: var(--primary); font-size: 1.2rem;">?</span>
+                    <span id="shareToggleIcon" style="color: var(--primary); font-size: 1.2rem;">▼</span>
                 </div>
                 <div id="shareContent" style="display: block;">
                     <input type="text" class="share-input" id="shareUsername" placeholder="ENTER USERNAME">
@@ -1689,10 +1689,10 @@
             
             if (content.style.display === 'none') {
                 content.style.display = 'block';
-                icon.textContent = '?';
+                icon.textContent = '▼';
             } else {
                 content.style.display = 'none';
-                icon.textContent = '?';
+                icon.textContent = '▶';
             }
         }
 
@@ -1728,7 +1728,7 @@
             
             // Reset share section to expanded state
             document.getElementById('shareContent').style.display = 'block';
-            document.getElementById('shareToggleIcon').textContent = '?';
+            document.getElementById('shareToggleIcon').textContent = '▼';
             
             // Hide share section if this is a shared drop (not owned by user)
             const shareSection = document.querySelector('.share-section');
@@ -1787,6 +1787,11 @@
         }
 
         async function shareDrop() {
+            if (!currentDrop) {
+                showToast('NO STASH SELECTED', true);
+                return;
+            }
+            
             const username = document.getElementById('shareUsername').value.trim();
             
             if (!username) {
@@ -1799,49 +1804,55 @@
                 return;
             }
 
-            // Find user by nickname
-            const { data: targetUser, error: userError } = await sbClient
-                .from(USERS_TABLE)
-                .select('id, nickname')
-                .eq('nickname', username)
-                .single();
+            try {
+                // Find user by nickname
+                const { data: targetUser, error: userError } = await sbClient
+                    .from(USERS_TABLE)
+                    .select('id, nickname')
+                    .eq('nickname', username)
+                    .single();
 
-            if (userError || !targetUser) {
-                showToast('USER NOT FOUND', true);
-                return;
+                if (userError || !targetUser) {
+                    console.error('User lookup error:', userError);
+                    showToast('USER NOT FOUND', true);
+                    return;
+                }
+
+                // Check if already shared
+                const { data: existing } = await sbClient
+                    .from(SHARES_TABLE)
+                    .select('id')
+                    .eq('drop_id', currentDrop.id)
+                    .eq('shared_with_user_id', targetUser.id)
+                    .single();
+
+                if (existing) {
+                    showToast('ALREADY SHARED WITH THIS USER', true);
+                    return;
+                }
+
+                // Share the drop
+                const { error: shareError } = await sbClient
+                    .from(SHARES_TABLE)
+                    .insert([{
+                        drop_id: currentDrop.id,
+                        owner_user_id: currentUser.id,
+                        shared_with_user_id: targetUser.id
+                    }]);
+
+                if (shareError) {
+                    console.error('Share error:', shareError);
+                    showToast('SHARE FAILED', true);
+                    return;
+                }
+
+                showToast(`SHARED WITH ${targetUser.nickname.toUpperCase()}`);
+                document.getElementById('shareUsername').value = '';
+                loadShareHistory();
+            } catch (err) {
+                console.error('Unexpected share error:', err);
+                showToast('SHARE FAILED - CHECK CONSOLE', true);
             }
-
-            // Check if already shared
-            const { data: existing } = await sbClient
-                .from(SHARES_TABLE)
-                .select('id')
-                .eq('drop_id', currentDrop.id)
-                .eq('shared_with_user_id', targetUser.id)
-                .single();
-
-            if (existing) {
-                showToast('ALREADY SHARED WITH THIS USER', true);
-                return;
-            }
-
-            // Share the drop
-            const { error: shareError } = await sbClient
-                .from(SHARES_TABLE)
-                .insert([{
-                    drop_id: currentDrop.id,
-                    owner_user_id: currentUser.id,
-                    shared_with_user_id: targetUser.id
-                }]);
-
-            if (shareError) {
-                console.error('Share error:', shareError);
-                showToast('SHARE FAILED', true);
-                return;
-            }
-
-            showToast(`SHARED WITH ${targetUser.nickname.toUpperCase()}`);
-            document.getElementById('shareUsername').value = '';
-            loadShareHistory();
         }
 
         function closeDetail() {
