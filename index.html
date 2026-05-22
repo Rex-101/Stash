@@ -1424,7 +1424,7 @@
             </div>
 
             <div class="auth-form active" id="loginForm">
-                <input type="text" class="auth-input" id="loginNickname" placeholder="NICKNAME">
+                <input type="text" class="auth-input" id="loginNickname" placeholder="USERNAME">
                 <input type="password" class="auth-input" id="loginPassword" placeholder="PASSWORD">
                 <label style="display: flex; align-items: center; gap: 10px; color: var(--text-secondary); font-size: 0.85rem; letter-spacing: 1px; font-family: 'Courier Prime', monospace; cursor: pointer; justify-content: center;">
                     <input type="checkbox" id="rememberMe" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary);">
@@ -1434,7 +1434,7 @@
             </div>
 
             <div class="auth-form" id="signupForm">
-                <input type="text" class="auth-input" id="signupNickname" placeholder="CHOOSE NICKNAME">
+                <input type="text" class="auth-input" id="signupNickname" placeholder="CHOOSE USERNAME">
                 <input type="password" class="auth-input" id="signupPassword" placeholder="CHOOSE PASSWORD">
                 <input type="password" class="auth-input" id="signupConfirm" placeholder="CONFIRM PASSWORD">
                 <button class="btn" onclick="signup()">CREATE STASH</button>
@@ -1712,7 +1712,7 @@
                 .single();
 
             if (existing) {
-                showToast('NICKNAME ALREADY TAKEN', true);
+                showToast('USERNAME ALREADY TAKEN', true);
                 return;
             }
 
