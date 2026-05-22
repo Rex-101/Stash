@@ -1,5 +1,5 @@
-﻿<<<<<<< HEAD
-﻿<html lang="en"><head>
+﻿
+<html lang="en"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -814,9 +814,9 @@
             pointer-events: none;
         }
 
-        /* ════════════════════════════════
+        /* --------------------------------
            MOBILE RESPONSIVE STYLES
-           ════════════════════════════════ */
+           -------------------------------- */
         
         @media (max-width: 768px) {
             body {
@@ -1188,29 +1188,12 @@
                 </div>
                 <div style="position: relative;">
                     <input type="text" id="searchInput" placeholder="SEARCH YOUR STASH...">
-                    <button id="clearSearch" style="display: none; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: var(--danger); cursor: pointer; font-size: 1.2rem; padding: 5px;" onclick="clearSearch()">✕</button>
+                    <button id="clearSearch" style="display: none; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: var(--danger); cursor: pointer; font-size: 1.2rem; padding: 5px;" onclick="clearSearch()">?</button>
                 </div>
             </div>
             <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 15px; letter-spacing: 2px; text-transform: uppercase; font-family: 'Syne', sans-serif; font-weight: 600;" id="stashCount">0 STASHES</div>
             <div class="drops-list" id="dropsList">
-                <div class="drop-item" onclick="openDetail('4b02eb9c-bbbe-4287-9321-4bc183f3c758')">
-                    <div style="color: var(--accent); font-size: 0.8rem; margin-bottom: 5px; text-transform: uppercase; font-family: 'Syne', sans-serif; font-weight: 600; display: flex; align-items: center; gap: 6px;">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
-                            <path d="M16 5L19 8M19 8L16 11M19 8H9M8 19L5 16M5 16L8 13M5 16H15" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        <span>SHARED BY Tochi</span>
-                    </div>
-                    <div class="drop-label">First share</div>
-                    <div class="drop-text">Hello Rex</div>
-                    <div class="drop-date">May 21, 2026, 07:19 PM</div>
-                </div>
-            
-                <div class="drop-item" onclick="openDetail('49f2d4cc-6511-4f97-8c50-394fb393b08e')">
-                    
-                    <div class="drop-label">Testing my app</div>
-                    <div class="drop-text">My first saved text in my vault, I am so happy</div>
-                    <div class="drop-date">May 21, 2026, 06:13 PM</div>
-                </div>
+                <!-- Drops will be loaded here dynamically -->
             </div>
         </div>
     </div>
@@ -1225,10 +1208,10 @@
 
     <div class="detail-panel" id="detailPanel">
         <div class="detail-content">
-            <div class="drop-label" id="detailLabel" style="display: block;">Testing my app</div>
-            <div class="drop-text" id="detailText">My first saved text in my vault, I am so happy</div>
+            <div class="drop-label" id="detailLabel" style="display: none;"></div>
+            <div class="drop-text" id="detailText"></div>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-                <div class="drop-date" id="detailDate">May 21, 2026, 06:13 PM</div>
+                <div class="drop-date" id="detailDate"></div>
                 <div style="color: var(--text-secondary); font-size: 0.8rem; letter-spacing: 1px; font-family: 'Courier Prime', monospace;" id="detailStats"></div>
             </div>
             <div class="detail-actions">
@@ -1240,7 +1223,7 @@
             <div class="share-section" style="display: block;">
                 <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 10px 0;" onclick="toggleShareSection()">
                     <div style="color: var(--primary); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; font-family: 'Syne', sans-serif; font-weight: 600;">SHARE WITH USER</div>
-                    <span id="shareToggleIcon" style="color: var(--primary); font-size: 1.2rem;">▼</span>
+                    <span id="shareToggleIcon" style="color: var(--primary); font-size: 1.2rem;">?</span>
                 </div>
                 <div id="shareContent" style="display: block;">
                     <input type="text" class="share-input" id="shareUsername" placeholder="ENTER USERNAME">
@@ -1665,10 +1648,10 @@
             
             if (content.style.display === 'none') {
                 content.style.display = 'block';
-                icon.textContent = '▼';
+                icon.textContent = '?';
             } else {
                 content.style.display = 'none';
-                icon.textContent = '▶';
+                icon.textContent = '?';
             }
         }
 
@@ -1698,7 +1681,7 @@
             
             // Reset share section to expanded state
             document.getElementById('shareContent').style.display = 'block';
-            document.getElementById('shareToggleIcon').textContent = '▼';
+            document.getElementById('shareToggleIcon').textContent = '?';
             
             // Hide share section if this is a shared drop (not owned by user)
             const shareSection = document.querySelector('.share-section');
@@ -1974,7 +1957,7 @@
             }
 
             if ('Notification' in window && Notification.permission === 'granted') {
-                const title = '📤 New Stash Received';
+                const title = '?? New Stash Received';
                 const options = {
                     body: `${fromUser} shared "${stashLabel}" with you`,
                     icon: '/icon-192.svg',
@@ -2055,7 +2038,7 @@
             const handleInstallClick = async () => {
                 if (!deferredPrompt) {
                     // If no install prompt available, show instructions
-                    showToast('TO INSTALL: Tap browser menu → "Add to Home Screen" or "Install App"');
+                    showToast('TO INSTALL: Tap browser menu ? "Add to Home Screen" or "Install App"');
                     return;
                 }
                 // Show the install prompt
@@ -2084,35 +2067,5 @@
             });
         }
     </script>
-<!-- Code injected by live-server -->
-<script>
-	// <![CDATA[  <-- For SVG support
-	if ('WebSocket' in window) {
-		(function () {
-			function refreshCSS() {
-				var sheets = [].slice.call(document.getElementsByTagName("link"));
-				var head = document.getElementsByTagName("head")[0];
-				for (var i = 0; i < sheets.length; ++i) {
-					var elem = sheets[i];
-					var parent = elem.parentElement || head;
-					parent.removeChild(elem);
-					var rel = elem.rel;
-					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
-						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
-						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
-					}
-					parent.appendChild(elem);
-				}
-			}
-			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
-			var address = protocol + window.location.host + window.location.pathname + '/ws';
-			var socket = new WebSocket(address);
-			socket.onmessage = function (msg) {
-				if (msg.data == 'reload') window.location.reload();
-				else if (msg.data == 'refreshcss') refreshCSS();
-			};
-			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
-				console.log('Live reload enabled.');
-				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
-			}
-		})();
+</body>
+</html>
