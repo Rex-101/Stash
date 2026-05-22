@@ -1,12 +1,26 @@
 <<<<<<< HEAD
-// Service worker for push notifications
+// Service worker v6 - Force cache clear
+const CACHE_VERSION = 'v6-clean';
+
 self.addEventListener('install', event => {
-  console.log('Service worker installed');
-  self.skipWaiting();
+  console.log('Service worker v6 installing - clearing all caches');
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          console.log('Deleting cache:', cacheName);
+          return caches.delete(cacheName);
+        })
+      );
+    }).then(() => {
+      console.log('All caches cleared, activating immediately');
+      return self.skipWaiting();
+    })
+  );
 });
 
 self.addEventListener('activate', event => {
-  console.log('Service worker activated');
+  console.log('Service worker v6 activated');
   event.waitUntil(self.clients.claim());
 });
 
@@ -60,15 +74,20 @@ self.addEventListener('notificationclick', event => {
   );
 });
 
-// Don't cache anything - always fetch from network
+// Always fetch from network - no caching
 self.addEventListener('fetch', event => {
   event.respondWith(
-    fetch(event.request).catch(() => {
-      return new Response('Offline - please check your connection', {
-        status: 503,
-        statusText: 'Service Unavailable'
-      });
-    })
+    fetch(event.request)
+      .then(response => {
+        // Return fresh response without caching
+        return response;
+      })
+      .catch(() => {
+        return new Response('Offline - please check your connection', {
+          status: 503,
+          statusText: 'Service Unavailable'
+        });
+      })
   );
 });
 
