@@ -520,6 +520,11 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        @keyframes slideUp {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+
         .pin-box {
             width: 70px;
             height: 80px;
@@ -1925,6 +1930,102 @@
                     }
                 });
             }
+            
+            // Show install prompt if not installed and user hasn't dismissed it
+            checkAndShowInstallPrompt();
+        }
+
+        function checkAndShowInstallPrompt() {
+            // Check if running as PWA (standalone mode)
+            const isInstalled = window.matchMedia('(display-mode: standalone)').matches || 
+                               window.navigator.standalone === true;
+            
+            if (isInstalled) {
+                return; // Already installed, don't show prompt
+            }
+            
+            // Check if user has dismissed the prompt
+            const dismissedInstall = localStorage.getItem('dismissedInstallPrompt');
+            
+            if (dismissedInstall === 'true') {
+                return; // User dismissed it, don't show again
+            }
+            
+            // Show install prompt after a short delay
+            setTimeout(() => {
+                showPersistentInstallPrompt();
+            }, 2000); // 2 second delay after login
+        }
+
+        function showPersistentInstallPrompt() {
+            // Create persistent banner
+            const banner = document.createElement('div');
+            banner.id = 'installPromptBanner';
+            banner.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: linear-gradient(135deg, var(--bg-elevated), var(--bg-card));
+                border: 2px solid var(--primary);
+                border-radius: 12px;
+                padding: 20px 25px;
+                max-width: 500px;
+                width: 90%;
+                z-index: 9999;
+                box-shadow: 0 0 30px rgba(201, 184, 122, 0.4);
+                animation: slideDown 0.5s ease;
+                font-family: 'Courier Prime', monospace;
+            `;
+            
+            banner.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="font-size: 2rem;">📱</div>
+                    <div style="flex: 1;">
+                        <div style="color: var(--primary); font-weight: 700; margin-bottom: 5px; font-size: 0.95rem;">INSTALL STASH APP</div>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">Get the full app experience with offline access!</div>
+                    </div>
+                    <button onclick="dismissInstallPrompt()" style="background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; padding: 5px;">×</button>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <button class="btn" onclick="triggerInstall()" style="flex: 1; padding: 10px 20px; font-size: 0.85rem;">INSTALL NOW</button>
+                    <button class="btn btn-secondary" onclick="dismissInstallPrompt()" style="flex: 1; padding: 10px 20px; font-size: 0.85rem;">MAYBE LATER</button>
+                </div>
+            `;
+            
+            document.body.appendChild(banner);
+        }
+
+        function dismissInstallPrompt() {
+            const banner = document.getElementById('installPromptBanner');
+            if (banner) {
+                banner.style.animation = 'slideUp 0.3s ease';
+                setTimeout(() => banner.remove(), 300);
+            }
+            // Don't save dismissal to localStorage - we want it to show again next login
+        }
+
+        function triggerInstall() {
+            const banner = document.getElementById('installPromptBanner');
+            if (banner) {
+                banner.remove();
+            }
+            
+            // Try to trigger native install prompt
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        showToast('APP INSTALLING...');
+                        // Mark as installed so prompt doesn't show again
+                        localStorage.setItem('dismissedInstallPrompt', 'true');
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                // Show instructions if native prompt not available
+                showInstallInstructions();
+            }
         }
 
         async function loadDrops() {
@@ -2668,7 +2769,14 @@
                 installBtn.style.display = 'none';
                 installBtnLock.style.display = 'none';
                 deferredPrompt = null;
+                localStorage.setItem('dismissedInstallPrompt', 'true');
                 showToast('APP INSTALLED SUCCESSFULLY');
+                
+                // Remove install prompt banner if visible
+                const banner = document.getElementById('installPromptBanner');
+                if (banner) {
+                    banner.remove();
+                }
             });
         }
 
@@ -2685,33 +2793,36 @@
                 // iOS Safari instructions
                 instructions = `
                     <div style="text-align: left; line-height: 1.8;">
-                        <div style="font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: var(--primary);">📱 INSTALL ON iOS/SAFARI</div>
-                        <div style="margin-bottom: 10px;">1. Tap the <strong>Share</strong> button (square with arrow)</div>
-                        <div style="margin-bottom: 10px;">2. Scroll down and tap <strong>"Add to Home Screen"</strong></div>
-                        <div style="margin-bottom: 10px;">3. Tap <strong>"Add"</strong> in the top right</div>
-                        <div style="margin-top: 15px; color: var(--text-secondary); font-size: 0.9rem;">The app icon will appear on your home screen!</div>
+                        <div style="font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: var(--primary);">📱 INSTALL STASH PWA</div>
+                        <div style="margin-bottom: 15px; color: var(--accent); font-size: 0.95rem;">This will install the full app on your device (not just a bookmark)</div>
+                        <div style="margin-bottom: 10px;"><strong>Step 1:</strong> Tap the <strong>Share</strong> button <span style="font-size: 1.2rem;">⎋</span> at the bottom</div>
+                        <div style="margin-bottom: 10px;"><strong>Step 2:</strong> Scroll down and tap <strong>"Add to Home Screen"</strong> <span style="font-size: 1.2rem;">➕</span></div>
+                        <div style="margin-bottom: 10px;"><strong>Step 3:</strong> Tap <strong>"Add"</strong> in the top right corner</div>
+                        <div style="margin-top: 15px; padding: 10px; background: rgba(201, 184, 122, 0.1); border-radius: 8px; color: var(--primary); font-size: 0.9rem;">✨ The Stash app will appear on your home screen and work like a native app!</div>
                     </div>
                 `;
             } else if (isAndroid || isChrome) {
                 // Android Chrome instructions
                 instructions = `
                     <div style="text-align: left; line-height: 1.8;">
-                        <div style="font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: var(--primary);">📱 INSTALL ON ANDROID/CHROME</div>
-                        <div style="margin-bottom: 10px;">1. Tap the <strong>Menu</strong> button (⋮ three dots)</div>
-                        <div style="margin-bottom: 10px;">2. Tap <strong>"Add to Home screen"</strong> or <strong>"Install app"</strong></div>
-                        <div style="margin-bottom: 10px;">3. Tap <strong>"Install"</strong> or <strong>"Add"</strong></div>
-                        <div style="margin-top: 15px; color: var(--text-secondary); font-size: 0.9rem;">The app will be installed on your device!</div>
+                        <div style="font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: var(--primary);">📱 INSTALL STASH PWA</div>
+                        <div style="margin-bottom: 15px; color: var(--accent); font-size: 0.95rem;">This will install the full app on your device (not just a bookmark)</div>
+                        <div style="margin-bottom: 10px;"><strong>Step 1:</strong> Tap the <strong>Menu</strong> button <span style="font-size: 1.2rem;">⋮</span> (three dots) at the top</div>
+                        <div style="margin-bottom: 10px;"><strong>Step 2:</strong> Tap <strong>"Add to Home screen"</strong> or <strong>"Install app"</strong></div>
+                        <div style="margin-bottom: 10px;"><strong>Step 3:</strong> Tap <strong>"Install"</strong> or <strong>"Add"</strong> to confirm</div>
+                        <div style="margin-top: 15px; padding: 10px; background: rgba(201, 184, 122, 0.1); border-radius: 8px; color: var(--primary); font-size: 0.9rem;">✨ The Stash app will be installed and work offline!</div>
                     </div>
                 `;
             } else {
                 // Generic instructions
                 instructions = `
                     <div style="text-align: left; line-height: 1.8;">
-                        <div style="font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: var(--primary);">📱 INSTALL APP</div>
-                        <div style="margin-bottom: 10px;">1. Open your browser menu</div>
-                        <div style="margin-bottom: 10px;">2. Look for <strong>"Add to Home Screen"</strong> or <strong>"Install"</strong></div>
-                        <div style="margin-bottom: 10px;">3. Follow the prompts to install</div>
-                        <div style="margin-top: 15px; color: var(--text-secondary); font-size: 0.9rem;">The app will be available on your device!</div>
+                        <div style="font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: var(--primary);">📱 INSTALL STASH PWA</div>
+                        <div style="margin-bottom: 15px; color: var(--accent); font-size: 0.95rem;">This will install the full Progressive Web App on your device</div>
+                        <div style="margin-bottom: 10px;"><strong>Step 1:</strong> Open your browser menu (usually ⋮ or ⋯)</div>
+                        <div style="margin-bottom: 10px;"><strong>Step 2:</strong> Look for <strong>"Add to Home Screen"</strong> or <strong>"Install"</strong></div>
+                        <div style="margin-bottom: 10px;"><strong>Step 3:</strong> Follow the prompts to install the app</div>
+                        <div style="margin-top: 15px; padding: 10px; background: rgba(201, 184, 122, 0.1); border-radius: 8px; color: var(--primary); font-size: 0.9rem;">✨ The app will work like a native app on your device!</div>
                     </div>
                 `;
             }
