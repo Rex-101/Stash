@@ -581,6 +581,20 @@
             box-shadow: 0 0 20px rgba(201, 184, 122, 0.3);
         }
 
+        .btn-glow {
+            animation: btnGlow 2s ease-in-out infinite;
+            box-shadow: 0 0 20px rgba(201, 184, 122, 0.4), 0 0 40px rgba(201, 184, 122, 0.2);
+        }
+
+        @keyframes btnGlow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(201, 184, 122, 0.4), 0 0 40px rgba(201, 184, 122, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(201, 184, 122, 0.6), 0 0 60px rgba(201, 184, 122, 0.3), 0 0 80px rgba(201, 184, 122, 0.1);
+            }
+        }
+
         .stash-logo {
             display: inline-flex;
             align-items: center;
@@ -805,6 +819,139 @@
         .btn-danger:hover { 
             border-color: var(--danger);
             box-shadow: 0 0 20px rgba(212, 93, 93, 0.3);
+        }
+
+        /* Plus Button */
+        .plus-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: var(--bg-dark);
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(201, 184, 122, 0.4);
+            transition: all 0.3s;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 300;
+        }
+
+        .plus-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 6px 30px rgba(201, 184, 122, 0.6);
+        }
+
+        /* Category Modal */
+        .category-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .category-modal.active {
+            display: flex;
+        }
+
+        .category-modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .category-option {
+            padding: 20px 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Syne', sans-serif;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+        }
+
+        .category-option:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .category-option.selected {
+            border-width: 3px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .category-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-family: 'Syne', sans-serif;
+        }
+
+        /* Category Filter */
+        .category-filter {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .category-filter-btn {
+            padding: 8px 16px;
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-family: 'Syne', sans-serif;
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+
+        .category-filter-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .category-filter-btn.active {
+            color: var(--bg-dark);
+            border-width: 2px;
         }
 
         .input-section {
@@ -1513,7 +1660,7 @@
                     <input type="checkbox" id="rememberMe" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary);">
                     <span>REMEMBER ME</span>
                 </label>
-                <button class="btn" onclick="login()">OPEN STASH</button>
+                <button class="btn btn-glow" onclick="login()">OPEN STASH</button>
             </div>
 
             <div class="auth-form" id="signupForm">
@@ -1557,7 +1704,7 @@
                     <button class="btn btn-secondary" onclick="logout()">LOGOUT</button>
                 </div>
             </header>
-            <div class="input-section">
+            <div class="input-section" style="display: none;">
                 <textarea id="textInput" placeholder="STASH YOUR DATA..."></textarea>
                 <div style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 15px; letter-spacing: 1px; font-family: 'Courier Prime', monospace;" id="charCount">0 CHARACTERS | 0 WORDS</div>
                 <div class="input-row">
@@ -1571,6 +1718,9 @@
                     <button class="filter-tab" data-filter="mine" onclick="filterByType('mine')">MY STASHES</button>
                     <button class="filter-tab" data-filter="shared" onclick="filterByType('shared')">SHARED WITH ME</button>
                 </div>
+                <div class="category-filter" id="categoryFilter">
+                    <button class="category-filter-btn active" onclick="filterByCategory('all')" data-category="all" style="border-color: var(--primary); color: var(--primary);">ALL</button>
+                </div>
                 <div style="position: relative;">
                     <input type="text" id="searchInput" placeholder="SEARCH YOUR STASH...">
                     <button id="clearSearch" style="display: none; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: var(--danger); cursor: pointer; font-size: 1.2rem; padding: 5px;" onclick="clearSearch()">?</button>
@@ -1579,6 +1729,32 @@
             <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 15px; letter-spacing: 2px; text-transform: uppercase; font-family: 'Syne', sans-serif; font-weight: 600;" id="stashCount">0 STASHES</div>
             <div class="drops-list" id="dropsList">
                 <!-- Drops will be loaded here dynamically -->
+            </div>
+        </div>
+
+        <!-- Plus Button -->
+        <button class="plus-btn" onclick="openCategoryModal()" style="display: none;" id="plusBtn">+</button>
+
+        <!-- Category Modal -->
+        <div class="category-modal" id="categoryModal">
+            <div class="category-modal-content">
+                <h2 style="font-family: 'Syne', sans-serif; font-size: 1.5rem; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px;">CREATE NEW STASH</h2>
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 20px; font-family: 'Courier Prime', monospace;">SELECT A CATEGORY</p>
+                
+                <div class="category-grid" id="categoryGrid">
+                    <!-- Categories will be populated here -->
+                </div>
+
+                <textarea id="modalTextInput" placeholder="STASH YOUR DATA..." style="width: 100%; min-height: 150px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; padding: 15px; color: var(--text-primary); font-family: 'Courier Prime', monospace; font-size: 0.9rem; resize: vertical; margin-top: 20px;"></textarea>
+                
+                <div style="color: var(--text-secondary); font-size: 0.85rem; margin: 10px 0; letter-spacing: 1px; font-family: 'Courier Prime', monospace;" id="modalCharCount">0 CHARACTERS | 0 WORDS</div>
+                
+                <input type="text" id="modalLabelInput" placeholder="LABEL (OPTIONAL)" style="width: 100%; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; padding: 15px; color: var(--text-primary); font-family: 'Courier Prime', monospace; font-size: 0.9rem; margin-bottom: 20px;">
+
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn" onclick="saveDropFromModal()" style="flex: 1;">STASH IT</button>
+                    <button class="btn btn-secondary" onclick="closeCategoryModal()" style="flex: 1;">CANCEL</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1634,11 +1810,23 @@
         const USERS_TABLE = "users";
         const SHARES_TABLE = "shared_drops";
         
+        // Categories with colors
+        const CATEGORIES = [
+            { id: 'personal', name: 'Personal', color: '#7B68EE' },
+            { id: 'work', name: 'Work', color: '#FF6B6B' },
+            { id: 'ideas', name: 'Ideas', color: '#4ECDC4' },
+            { id: 'links', name: 'Links', color: '#FFD93D' },
+            { id: 'notes', name: 'Notes', color: '#95E1D3' },
+            { id: 'code', name: 'Code', color: '#F38181' },
+            { id: 'other', name: 'Other', color: '#AA96DA' }
+        ];
+        
         var sbClient;
         var drops = [];
         var currentDrop = null;
         var currentUser = null;
         var currentFilter = 'all';
+        var currentCategory = 'all';
         var deferredPrompt = null;
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -1648,6 +1836,12 @@
             checkSession();
             registerServiceWorker();
             setupInstallPrompt();
+            
+            // Debug: Check if bcrypt is loaded
+            console.log('bcrypt loaded:', typeof bcrypt !== 'undefined');
+            if (typeof bcrypt !== 'undefined') {
+                console.log('bcrypt object:', bcrypt);
+            }
         });
 
         function checkLandingPage() {
@@ -1711,6 +1905,7 @@
                 toggleClearButton();
             });
             document.getElementById('textInput').addEventListener('input', updateCharCount);
+            document.getElementById('modalTextInput').addEventListener('input', updateModalCharCount);
             document.getElementById('copyBtn').addEventListener('click', copyDrop);
             document.getElementById('editBtn').addEventListener('click', editDrop);
             document.getElementById('deleteBtn').addEventListener('click', confirmDelete);
@@ -1718,6 +1913,9 @@
             document.getElementById('shareBtn').addEventListener('click', shareDrop);
             document.getElementById('detailPanel').addEventListener('click', e => {
                 if (e.target.id === 'detailPanel') closeDetail();
+            });
+            document.getElementById('categoryModal').addEventListener('click', e => {
+                if (e.target.id === 'categoryModal') closeCategoryModal();
             });
 
             // Enter key handlers
@@ -1739,6 +1937,7 @@
                 }
                 if (e.key === 'Escape') {
                     closeDetail();
+                    closeCategoryModal();
                 }
             });
         }
@@ -1786,12 +1985,6 @@
 
                 if (password !== confirm) {
                     showToast('PASSWORDS DO NOT MATCH', true);
-                    return;
-                }
-
-                // Check if bcrypt is loaded
-                if (typeof bcrypt === 'undefined') {
-                    showToast('LOADING... PLEASE TRY AGAIN', true);
                     return;
                 }
 
@@ -1845,12 +2038,6 @@
                     return;
                 }
 
-                // Check if bcrypt is loaded
-                if (typeof bcrypt === 'undefined') {
-                    showToast('LOADING... PLEASE TRY AGAIN', true);
-                    return;
-                }
-
                 // Get user by nickname
                 const { data: user, error } = await sbClient
                     .from(USERS_TABLE)
@@ -1895,6 +2082,7 @@
             localStorage.removeItem('rememberMe');
             sessionStorage.removeItem('currentUser');
             document.getElementById('mainApp').classList.remove('visible');
+            document.getElementById('plusBtn').style.display = 'none';
             document.getElementById('lockScreen').classList.remove('hidden');
             document.getElementById('loginNickname').value = '';
             document.getElementById('loginPassword').value = '';
@@ -1939,7 +2127,9 @@
         function showMainApp() {
             document.getElementById('lockScreen').classList.add('hidden');
             document.getElementById('mainApp').classList.add('visible');
+            document.getElementById('plusBtn').style.display = 'flex';
             document.getElementById('userDisplay').textContent = `USER: ${currentUser.nickname.toUpperCase()}`;
+            initializeCategoryFilters();
             updateNotificationBadge();
             loadDrops();
             subscribeToRealtime();
@@ -2150,6 +2340,9 @@
             }
             list.innerHTML = dropsToRender.map(drop => {
                 const isUnopened = unopened.includes(drop.id);
+                const category = CATEGORIES.find(c => c.id === drop.category);
+                const categoryTag = category ? `<span class="category-tag" style="background: ${category.color}; color: white;">${category.name}</span>` : '';
+                
                 return `
                 <div class="drop-item" onclick="openDetail('${drop.id}')" style="${isUnopened ? 'border-color: var(--danger); box-shadow: 0 0 15px rgba(212, 93, 93, 0.3);' : ''}">
                     ${drop.shared ? `<div style="color: var(--accent); font-size: 0.8rem; margin-bottom: 5px; text-transform: uppercase; font-family: 'Syne', sans-serif; font-weight: 600; display: flex; align-items: center; gap: 6px; justify-content: space-between;">
@@ -2161,6 +2354,7 @@
                         </div>
                         ${isUnopened ? '<span style="background: var(--danger); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 700;">NEW</span>' : ''}
                     </div>` : ''}
+                    ${categoryTag}
                     ${drop.label ? `<div class="drop-label">${escapeHtml(drop.label)}</div>` : ''}
                     <div class="drop-text">${escapeHtml(drop.text)}</div>
                     <div class="drop-date">${formatDate(drop.created_at)}</div>
@@ -2179,6 +2373,11 @@
                 filtered = drops.filter(drop => !drop.shared);
             } else if (currentFilter === 'shared') {
                 filtered = drops.filter(drop => drop.shared);
+            }
+            
+            // Apply category filter
+            if (currentCategory !== 'all') {
+                filtered = filtered.filter(drop => drop.category === currentCategory);
             }
             
             // Apply search filter
@@ -2207,6 +2406,135 @@
             document.querySelector(`[data-filter="${type}"]`).classList.add('active');
             
             filterDrops();
+        }
+
+        function filterByCategory(categoryId) {
+            currentCategory = categoryId;
+            
+            // Update active category button
+            document.querySelectorAll('.category-filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.style.borderColor = 'var(--border)';
+                btn.style.color = 'var(--text-secondary)';
+            });
+            
+            const activeBtn = document.querySelector(`[data-category="${categoryId}"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+                if (categoryId === 'all') {
+                    activeBtn.style.borderColor = 'var(--primary)';
+                    activeBtn.style.color = 'var(--primary)';
+                } else {
+                    const category = CATEGORIES.find(c => c.id === categoryId);
+                    if (category) {
+                        activeBtn.style.borderColor = category.color;
+                        activeBtn.style.backgroundColor = category.color;
+                        activeBtn.style.color = 'white';
+                    }
+                }
+            }
+            
+            filterDrops();
+        }
+
+        function initializeCategoryFilters() {
+            const filterContainer = document.getElementById('categoryFilter');
+            
+            // Add category buttons
+            CATEGORIES.forEach(category => {
+                const btn = document.createElement('button');
+                btn.className = 'category-filter-btn';
+                btn.setAttribute('data-category', category.id);
+                btn.setAttribute('onclick', `filterByCategory('${category.id}')`);
+                btn.textContent = category.name;
+                btn.style.borderColor = category.color;
+                filterContainer.appendChild(btn);
+            });
+        }
+
+        function openCategoryModal() {
+            const modal = document.getElementById('categoryModal');
+            const grid = document.getElementById('categoryGrid');
+            
+            // Populate category grid
+            grid.innerHTML = CATEGORIES.map(category => `
+                <div class="category-option" data-category="${category.id}" onclick="selectCategory('${category.id}')" style="border-color: ${category.color};">
+                    <div style="color: ${category.color}; font-size: 1.5rem; margin-bottom: 8px;">●</div>
+                    <div>${category.name}</div>
+                </div>
+            `).join('');
+            
+            modal.classList.add('active');
+            document.getElementById('modalTextInput').focus();
+        }
+
+        function closeCategoryModal() {
+            const modal = document.getElementById('categoryModal');
+            modal.classList.remove('active');
+            
+            // Clear inputs
+            document.getElementById('modalTextInput').value = '';
+            document.getElementById('modalLabelInput').value = '';
+            
+            // Deselect all categories
+            document.querySelectorAll('.category-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+        }
+
+        let selectedCategory = null;
+
+        function selectCategory(categoryId) {
+            selectedCategory = categoryId;
+            
+            // Update visual selection
+            document.querySelectorAll('.category-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            document.querySelector(`[data-category="${categoryId}"]`).classList.add('selected');
+        }
+
+        async function saveDropFromModal() {
+            const text = document.getElementById('modalTextInput').value.trim();
+            const label = document.getElementById('modalLabelInput').value.trim();
+            
+            if (!text) {
+                showToast('NO DATA ENTERED', true);
+                return;
+            }
+            
+            if (!selectedCategory) {
+                showToast('PLEASE SELECT A CATEGORY', true);
+                return;
+            }
+            
+            const { data, error } = await sbClient
+                .from(TABLE_NAME)
+                .insert([{ 
+                    text, 
+                    label: label || null, 
+                    category: selectedCategory,
+                    user_id: currentUser.id 
+                }])
+                .select();
+            
+            if (error) {
+                console.error('Save error:', error);
+                showToast('SAVE FAILED', true);
+                return;
+            }
+            
+            selectedCategory = null;
+            closeCategoryModal();
+            showToast('DATA SAVED');
+            loadDrops();
+        }
+
+        function updateModalCharCount() {
+            const text = document.getElementById('modalTextInput').value;
+            const charCount = text.length;
+            const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
+            document.getElementById('modalCharCount').textContent = `${charCount} CHARACTERS | ${wordCount} WORDS`;
         }
 
         function clearSearch() {
