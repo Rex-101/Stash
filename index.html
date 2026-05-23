@@ -1,2284 +1,1635 @@
-﻿
-<html lang="en"><head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <meta name="theme-color" content="#000000">
-    <meta name="description" content="Stash here. Access everywhere.">
-    <meta name="application-name" content="STASH">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="STASH">
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="apple-touch-icon" sizes="192x192" href="icon-192.svg">
-    <link rel="apple-touch-icon" sizes="512x512" href="icon-512.svg">
-    <link rel="manifest" href="manifest.json">
+﻿<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Cache-Control"
+      content="no-cache, no-store, must-revalidate"
+    />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Save here. Access everywhere." />
+    <meta name="application-name" content="STASH" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="STASH" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="apple-touch-icon" sizes="192x192" href="icon-192.svg" />
+    <link rel="apple-touch-icon" sizes="512x512" href="icon-512.svg" />
+    <link rel="manifest" href="manifest.json" />
     <title>STASH</title>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Courier+Prime:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <!-- Theme v2.0 - Sophisticated Dark -->
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        :root {
-            --primary: #c9b87a;
-            --primary-dark: #a89660;
-            --accent: #d4c291;
-            --bg-dark: #0e0e0f;
-            --bg-card: #111112;
-            --bg-elevated: #1e1d1a;
-            --border: #2a2820;
-            --border-light: #1e1e1f;
-            --text-primary: #edeae0;
-            --text-secondary: #888;
-            --text-muted: #444;
-            --danger: #d45d5d;
-            --cyber-green: #c9b87a;
-            --cyber-blue: #6ea5d7;
-            --cyber-red: #d45d5d;
-        }
-
-        body {
-            font-family: 'Syne', sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-primary);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        body::after {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 50% 50%, rgba(201, 184, 122, 0.03) 0%, transparent 50%);
-            pointer-events: none;
-        }
-
-        .container { 
-            max-width: 900px; 
-            margin: 0 auto; 
-            position: relative; 
-            z-index: 5; 
-            padding: 20px;
-        }
-
-        /* ════════════════════════════════
-           LANDING PAGE STYLES
-           ════════════════════════════════ */
-        
-        #landingPage {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            padding: 0;
-            background: var(--bg-dark);
-            z-index: 10;
-            overflow-y: auto;
-        }
-
-        #landingPage.hidden { display: none; }
-
-        .landing-hero {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 90vh;
-            text-align: center;
-            padding: 40px 20px;
-        }
-
-        .landing-logo-large {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .landing-logo-mark {
-            position: relative;
-            width: 80px;
-            height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .landing-logo-mark-bg {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, #1e1d1a, #161514);
-            border-radius: 20px;
-            border: 2px solid var(--border);
-        }
-
-        .landing-logo-mark-inner {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .landing-drop-line {
-            width: 3px;
-            height: 20px;
-            background: linear-gradient(to bottom, transparent, var(--primary));
-            border-radius: 2px;
-        }
-
-        .landing-drop-arrow {
-            width: 0;
-            height: 0;
-            border-left: 8px solid transparent;
-            border-right: 8px solid transparent;
-            border-top: 12px solid var(--primary);
-            filter: drop-shadow(0 0 8px rgba(201, 184, 122, 0.6));
-        }
-
-        .landing-drop-shelf {
-            width: 32px;
-            height: 4px;
-            background: var(--primary);
-            border-radius: 2px;
-            box-shadow: 0 0 12px rgba(201, 184, 122, 0.4);
-        }
-
-        .landing-wordmark h1 {
-            font-size: 5rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            margin: 0;
-            background: linear-gradient(135deg, var(--text-primary), var(--primary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .landing-tagline {
-            font-size: 1.5rem;
-            color: var(--primary-dark);
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            margin-bottom: 50px;
-            font-family: 'Courier Prime', monospace;
-        }
-
-        .landing-features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            margin-bottom: 60px;
-            max-width: 900px;
-        }
-
-        .feature-card {
-            background: var(--bg-card);
-            padding: 30px;
-            border-radius: 12px;
-            border: 1px solid var(--border-light);
-            transition: all 0.3s;
-        }
-
-        .feature-card:hover {
-            border-color: var(--primary);
-            box-shadow: 0 0 30px rgba(201, 184, 122, 0.2);
-            transform: translateY(-5px);
-        }
-
-        .feature-icon {
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .feature-icon svg {
-            filter: drop-shadow(0 0 10px rgba(201, 184, 122, 0.3));
-            transition: all 0.3s;
-        }
-
-        .feature-card:hover .feature-icon svg {
-            filter: drop-shadow(0 0 20px rgba(201, 184, 122, 0.6));
-            transform: scale(1.1);
-        }
-
-        .feature-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .feature-desc {
-            color: var(--text-secondary);
-            line-height: 1.6;
-            font-family: 'Courier Prime', monospace;
-            font-size: 0.9rem;
-        }
-
-        .landing-cta {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .cta-btn {
-            padding: 18px 50px;
-            font-family: 'Syne', sans-serif;
-            font-size: 1rem;
-            font-weight: 700;
-            background: var(--primary);
-            color: var(--bg-dark);
-            border: 2px solid var(--primary);
-            border-radius: 8px;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .cta-btn:hover {
-            background: transparent;
-            color: var(--primary);
-            box-shadow: 0 0 30px rgba(201, 184, 122, 0.4);
-            transform: translateY(-2px);
-        }
-
-        .cta-btn-secondary {
-            background: transparent;
-            color: var(--primary);
-        }
-
-        .cta-btn-secondary:hover {
-            background: var(--primary);
-            color: var(--bg-dark);
-        }
-
-        .landing-footer {
-            margin-top: 60px;
-            padding: 30px 20px;
-            text-align: center;
-            border-top: 1px solid var(--border-light);
-        }
-
-        .landing-credit {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            letter-spacing: 1px;
-            font-family: 'Courier Prime', monospace;
-        }
-
-        .landing-credit a {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 700;
-            transition: all 0.3s;
-        }
-
-        .landing-credit a:hover {
-            color: var(--accent);
-            text-shadow: 0 0 10px rgba(201, 184, 122, 0.5);
-        }
-
-        @media (max-width: 768px) {
-            .landing-wordmark h1 {
-                font-size: 3rem;
-            }
-
-            .landing-tagline {
-                font-size: 1rem;
-                letter-spacing: 2px;
-            }
-
-            .landing-features {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .landing-logo-mark {
-                width: 60px;
-                height: 60px;
-            }
-
-            .cta-btn {
-                padding: 15px 40px;
-                font-size: 0.9rem;
-            }
-
-            .landing-footer {
-                margin-top: 40px;
-                padding: 20px;
-            }
-
-            .landing-credit {
-                font-size: 0.8rem;
-            }
-        }
-
-        #lockScreen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 80vh;
-        }
-
-        #lockScreen.hidden { display: none; }
-
-        .auth-tabs {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .auth-tab {
-            padding: 10px 30px;
-            background: transparent;
-            border: 2px solid var(--border);
-            color: var(--text-muted);
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-family: 'Syne', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 600;
-            border-radius: 8px;
-            transition: all 0.3s;
-        }
-
-        .auth-tab.active {
-            border-color: var(--primary);
-            color: var(--primary);
-            background: rgba(201, 184, 122, 0.05);
-            box-shadow: 0 0 15px rgba(201, 184, 122, 0.2);
-        }
-
-        .auth-form {
-            display: none;
-            flex-direction: column;
-            gap: 20px;
-            width: 400px;
-            max-width: 90%;
-        }
-
-        .auth-form.active {
-            display: flex;
-            animation: slideDown 0.5s ease;
-        }
-
-        .auth-input {
-            padding: 15px 20px;
-            font-family: 'Courier Prime', monospace;
-            font-size: 1rem;
-            background: var(--bg-card);
-            border: 2px solid var(--border);
-            color: var(--text-primary);
-            border-radius: 8px;
-            text-align: center;
-            letter-spacing: 1px;
-            transition: all 0.3s;
-        }
-
-        .auth-input::placeholder {
-            color: var(--text-muted);
-        }
-
-        .auth-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(201, 184, 122, 0.2);
-        }
-
-        .lock-icon {
-            font-size: 5rem;
-            margin-bottom: 20px;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        .lock-svg {
-            width: 120px;
-            height: 120px;
-            margin-bottom: 30px;
-            filter: drop-shadow(0 0 30px var(--primary));
-        }
-
-        .lock-svg .lock-body {
-            fill: none;
-            stroke: var(--primary);
-            stroke-width: 3;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            animation: lockPulse 2s ease-in-out infinite;
-        }
-
-        .lock-svg .lock-shackle {
-            fill: none;
-            stroke: var(--accent);
-            stroke-width: 3;
-            stroke-linecap: round;
-            animation: shackleFloat 3s ease-in-out infinite;
-        }
-
-        .lock-svg .lock-keyhole {
-            fill: var(--primary);
-            animation: keyholeGlow 2s ease-in-out infinite;
-        }
-
-        .lock-svg .particle {
-            fill: var(--primary);
-            opacity: 0;
-            animation: particleFloat 3s ease-in-out infinite;
-        }
-
-        .lock-svg .particle:nth-child(2) { animation-delay: 0.5s; }
-        .lock-svg .particle:nth-child(3) { animation-delay: 1s; }
-        .lock-svg .particle:nth-child(4) { animation-delay: 1.5s; }
-
-        @keyframes lockPulse {
-            0%, 100% { 
-                stroke: var(--primary);
-                filter: drop-shadow(0 0 10px var(--primary));
-            }
-            50% { 
-                stroke: var(--accent);
-                filter: drop-shadow(0 0 20px var(--accent));
-            }
-        }
-
-        @keyframes shackleFloat {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-5px); }
-        }
-
-        @keyframes keyholeGlow {
-            0%, 100% { 
-                fill: var(--primary);
-                filter: drop-shadow(0 0 5px var(--primary));
-            }
-            50% { 
-                fill: var(--accent);
-                filter: drop-shadow(0 0 10px var(--accent));
-            }
-        }
-
-        @keyframes particleFloat {
-            0% { 
-                opacity: 0;
-                transform: translateY(0) scale(0);
-            }
-            50% { 
-                opacity: 1;
-                transform: translateY(-30px) scale(1);
-            }
-            100% { 
-                opacity: 0;
-                transform: translateY(-60px) scale(0);
-            }
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; text-shadow: 0 0 20px var(--primary); }
-            50% { opacity: 0.7; text-shadow: 0 0 40px var(--primary); }
-        }
-
-        #lockScreen h1 {
-            font-size: 3rem;
-            text-transform: uppercase;
-            letter-spacing: 8px;
-            text-shadow: 0 0 20px var(--primary);
-            margin-bottom: 10px;
-        }
-
-        .security-text {
-            color: var(--primary-dark);
-            font-size: 0.9rem;
-            margin-bottom: 40px;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-        }
-
-        #pinInputSection {
-            display: none;
-            gap: 15px;
-            margin: 30px 0;
-        }
-
-        #pinInputSection.visible {
-            display: flex;
-            animation: slideDown 0.5s ease;
-        }
-
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes slideUp {
-            from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(-20px); }
-        }
-
-        .pin-box {
-            width: 70px;
-            height: 80px;
-            text-align: center;
-            font-size: 2.5rem;
-            font-family: 'Courier Prime', monospace;
-            background: var(--bg-card);
-            border: 2px solid var(--border);
-            color: var(--primary);
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(201, 184, 122, 0.2);
-        }
-
-        .pin-box:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 20px rgba(201, 184, 122, 0.3);
-        }
-
-        .btn {
-            padding: 15px 40px;
-            font-family: 'Syne', sans-serif;
-            font-size: 0.9rem;
-            font-weight: 600;
-            background: transparent;
-            color: var(--primary);
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s;
-            z-index: 1;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: var(--primary);
-            transition: left 0.3s;
-            z-index: -1;
-        }
-
-        .btn:hover::before { left: 0; }
-        .btn:hover { 
-            color: var(--bg-dark); 
-            border-color: var(--primary);
-            box-shadow: 0 0 20px rgba(201, 184, 122, 0.3);
-        }
-
-        .btn-glow {
-            animation: btnGlow 2s ease-in-out infinite;
-            box-shadow: 0 0 20px rgba(201, 184, 122, 0.4), 0 0 40px rgba(201, 184, 122, 0.2);
-        }
-
-        @keyframes btnGlow {
-            0%, 100% {
-                box-shadow: 0 0 20px rgba(201, 184, 122, 0.4), 0 0 40px rgba(201, 184, 122, 0.2);
-            }
-            50% {
-                box-shadow: 0 0 30px rgba(201, 184, 122, 0.6), 0 0 60px rgba(201, 184, 122, 0.3), 0 0 80px rgba(201, 184, 122, 0.1);
-            }
-        }
-
-        .stash-logo {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .logo-mark {
-            position: relative;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .logo-mark-bg {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, #1e1d1a, #161514);
-            border-radius: 8px;
-            border: 1px solid var(--border);
-        }
-
-        .logo-mark-inner {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-        }
-
-        .drop-line {
-            width: 1.5px;
-            height: 8px;
-            background: linear-gradient(to bottom, transparent, var(--primary));
-            border-radius: 2px;
-        }
-
-        .drop-arrow {
-            width: 0;
-            height: 0;
-            border-left: 3px solid transparent;
-            border-right: 3px solid transparent;
-            border-top: 5px solid var(--primary);
-            filter: drop-shadow(0 0 4px rgba(201, 184, 122, 0.6));
-        }
-
-        .drop-shelf {
-            width: 14px;
-            height: 2px;
-            background: var(--primary);
-            border-radius: 2px;
-            box-shadow: 0 0 6px rgba(201, 184, 122, 0.4);
-        }
-
-        .logo-wordmark {
-            display: flex;
-            flex-direction: column;
-            line-height: 1;
-        }
-
-        .logo-name {
-            font-family: 'Syne', sans-serif;
-            font-weight: 800;
-            font-size: 16px;
-            letter-spacing: -0.04em;
-            color: var(--text-primary);
-            text-transform: uppercase;
-        }
-
-        .logo-name span {
-            color: var(--primary);
-        }
-
-        .logo-sub {
-            font-family: 'Courier Prime', monospace;
-            font-size: 8px;
-            letter-spacing: 0.16em;
-            color: #777;
-            margin-top: 2px;
-        }
-
-        #submitPinBtn { display: none; }
-        #submitPinBtn.visible { display: block; animation: slideDown 0.5s ease 0.2s both; }
-
-        #decryptionScreen {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(14, 14, 15, 0.98);
-            z-index: 1000;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        #decryptionScreen.active { display: flex; }
-
-        .decrypt-text {
-            font-size: 1.8rem;
-            color: var(--primary);
-            margin-bottom: 40px;
-            text-transform: uppercase;
-            letter-spacing: 5px;
-            animation: pulse 1s ease-in-out infinite;
-            font-family: 'Syne', sans-serif;
-            font-weight: 700;
-        }
-
-        .progress-bar {
-            width: 500px;
-            max-width: 90%;
-            height: 40px;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 0 0 30px rgba(201, 184, 122, 0.2);
-            background: var(--bg-card);
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 50%, var(--primary) 100%);
-            width: 0%;
-            transition: width 0.1s linear;
-            box-shadow: 0 0 20px rgba(201, 184, 122, 0.4);
-        }
-
-        .decrypt-status {
-            margin-top: 30px;
-            font-size: 1rem;
-            color: var(--primary-dark);
-            min-height: 25px;
-            letter-spacing: 2px;
-            font-family: 'Courier Prime', monospace;
-        }
-
-        #mainApp { display: none; animation: fadeIn 1s ease; }
-        #mainApp.visible { display: block; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes notificationPulse {
-            0% {
-                transform: scale(1);
-                box-shadow: 0 0 10px rgba(212, 93, 93, 0.5);
-            }
-            50% {
-                transform: scale(1.2);
-                box-shadow: 0 0 20px rgba(212, 93, 93, 0.8);
-            }
-            100% {
-                transform: scale(1);
-                box-shadow: 0 0 10px rgba(212, 93, 93, 0.5);
-            }
-        }
-
-        @keyframes notificationPop {
-            0% {
-                transform: scale(0);
-                opacity: 0;
-            }
-            50% {
-                transform: scale(1.3);
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        .notification-pulse {
-            animation: notificationPulse 1s ease-in-out infinite;
-        }
-
-        .notification-pop {
-            animation: notificationPop 0.5s ease-out;
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding: 20px 24px;
-            border: 1px solid var(--border-light);
-            border-radius: 12px;
-            background: var(--bg-card);
-        }
-
-        header h1 {
-            font-size: 2rem;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-        }
-
-        .btn-secondary {
-            color: var(--text-secondary);
-        }
-
-        .btn-secondary::before { background: var(--text-secondary); }
-        .btn-secondary:hover { 
-            border-color: var(--text-secondary);
-            box-shadow: 0 0 20px rgba(136, 136, 136, 0.3);
-        }
-
-        .btn-danger {
-            color: var(--danger);
-        }
-
-        .btn-danger::before { background: var(--danger); }
-        .btn-danger:hover { 
-            border-color: var(--danger);
-            box-shadow: 0 0 20px rgba(212, 93, 93, 0.3);
-        }
-
-        /* Plus Button */
-        .plus-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: var(--primary);
-            color: var(--bg-dark);
-            border: none;
-            font-size: 2rem;
-            cursor: pointer;
-            box-shadow: 0 4px 20px rgba(201, 184, 122, 0.4);
-            transition: all 0.3s;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 300;
-        }
-
-        .plus-btn:hover {
-            transform: scale(1.1) rotate(90deg);
-            box-shadow: 0 6px 30px rgba(201, 184, 122, 0.6);
-        }
-
-        /* Category Modal */
-        .category-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(5px);
-        }
-
-        .category-modal.active {
-            display: flex;
-        }
-
-        .category-modal-content {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 30px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .category-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-
-        .category-option {
-            padding: 20px 15px;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Syne', sans-serif;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.85rem;
-        }
-
-        .category-option:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .category-option.selected {
-            border-width: 3px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-        }
-
-        .category-tag {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-            font-family: 'Syne', sans-serif;
-        }
-
-        /* Category Filter */
-        .category-filter {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .category-filter-btn {
-            padding: 8px 16px;
-            border: 2px solid var(--border);
-            border-radius: 20px;
-            background: transparent;
-            color: var(--text-secondary);
-            cursor: pointer;
-            font-family: 'Syne', sans-serif;
-            font-weight: 600;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s;
-        }
-
-        .category-filter-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .category-filter-btn.active {
-            color: var(--bg-dark);
-            border-width: 2px;
-        }
-
-        .input-section {
-            background: var(--bg-card);
-            padding: 25px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            border: 1px solid var(--border-light);
-        }
-
-        textarea {
-            width: 100%;
-            min-height: 150px;
-            padding: 15px;
-            font-family: 'Courier Prime', monospace;
-            font-size: 1rem;
-            background: var(--bg-dark);
-            border: 2px solid var(--border);
-            color: var(--text-primary);
-            border-radius: 8px;
-            resize: vertical;
-            margin-bottom: 15px;
-            transition: all 0.3s;
-        }
-
-        textarea:focus, input[type="text"]:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(201, 184, 122, 0.2);
-        }
-
-        .input-row { display: flex; gap: 15px; flex-wrap: wrap; }
-
-        input[type="text"] {
-            flex: 1;
-            min-width: 200px;
-            padding: 12px 15px;
-            font-family: 'Courier Prime', monospace;
-            font-size: 1rem;
-            background: var(--bg-dark);
-            border: 2px solid var(--border);
-            color: var(--text-primary);
-            border-radius: 8px;
-            transition: all 0.3s;
-        }
-
-        .search-bar { margin-bottom: 20px; }
-        .search-bar input {
-            width: 100%;
-            padding: 15px;
-            font-size: 1.1rem;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-        }
-
-        .filter-tab {
-            flex: 1;
-            padding: 10px 20px;
-            background: transparent;
-            border: 2px solid var(--border);
-            color: var(--text-muted);
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-family: 'Syne', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 600;
-            border-radius: 8px;
-            transition: all 0.3s;
-        }
-
-        .filter-tab.active {
-            border-color: var(--primary);
-            color: var(--primary);
-            box-shadow: 0 0 15px rgba(201, 184, 122, 0.2);
-            background: rgba(201, 184, 122, 0.05);
-        }
-
-        .filter-tab:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
-        .drops-list { display: flex; flex-direction: column; gap: 15px; }
-
-        .drop-item {
-            background: var(--bg-card);
-            padding: 20px;
-            border-radius: 12px;
-            cursor: pointer;
-            border: 1px solid var(--border-light);
-            position: relative;
-            transition: all 0.3s;
-        }
-
-        .drop-item::before {
-            content: '>';
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--primary);
-            font-size: 1.5rem;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .drop-item:hover {
-            border-color: var(--primary);
-            box-shadow: 0 0 20px rgba(201, 184, 122, 0.2);
-            padding-left: 40px;
-        }
-
-        .drop-item:hover::before { opacity: 1; }
-
-        .drop-label {
-            color: var(--primary);
-            font-weight: 700;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-family: 'Syne', sans-serif;
-        }
-
-        .drop-text {
-            font-size: 0.95rem;
-            color: var(--text-primary);
-            white-space: pre-wrap;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            line-clamp: 3;
-            -webkit-box-orient: vertical;
-            font-family: 'Courier Prime', monospace;
-        }
-
-        .drop-date { 
-            color: var(--text-muted); 
-            font-size: 0.8rem; 
-            margin-top: 10px;
-            font-family: 'Courier Prime', monospace;
-        }
-
-        .detail-panel {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(14, 14, 15, 0.95);
-            z-index: 100;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .detail-panel.active { display: flex; }
-
-        .detail-content {
-            background: var(--bg-card);
-            max-width: 700px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            padding: 30px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            box-shadow: 0 0 40px rgba(201, 184, 122, 0.2);
-        }
-
-        .detail-content .drop-text {
-            -webkit-line-clamp: unset;
-            line-clamp: unset;
-            margin-bottom: 20px;
-            max-height: 50vh;
-            overflow-y: auto;
-        }
-
-        .detail-actions { display: flex; gap: 10px; margin-top: 20px; }
-        .detail-actions .btn { flex: 1; padding: 12px 20px; font-size: 0.85rem; }
-
-        .share-section {
-            margin-top: 25px;
-            padding-top: 25px;
-            border-top: 1px solid var(--border-light);
-        }
-
-        .share-input {
-            width: 100%;
-            padding: 12px 15px;
-            font-family: 'Courier Prime', monospace;
-            font-size: 1rem;
-            background: var(--bg-dark);
-            border: 2px solid var(--border);
-            color: var(--text-primary);
-            border-radius: 8px;
-            margin-bottom: 10px;
-            transition: all 0.3s;
-        }
-
-        .share-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(201, 184, 122, 0.2);
-        }
-
-        .share-input::placeholder {
-            color: var(--text-muted);
-        }
-
-        .toast-container {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 200;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .toast {
-            background: var(--bg-card);
-            padding: 15px 25px;
-            border-radius: 8px;
-            border: 1px solid var(--primary);
-            animation: slideIn 0.3s ease;
-            box-shadow: 0 0 20px rgba(201, 184, 122, 0.2);
-            color: var(--primary);
-            font-family: 'Syne', sans-serif;
-            font-weight: 600;
-            letter-spacing: 1px;
-        }
-
-        .toast.error {
-            border-color: var(--danger);
-            box-shadow: 0 0 20px rgba(212, 93, 93, 0.2);
-            color: var(--danger);
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(100px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        @keyframes glitchDelete {
-            0% { 
-                transform: translate(0);
-                opacity: 1;
-            }
-            10% { 
-                transform: translate(-5px, 5px);
-                opacity: 0.9;
-                filter: hue-rotate(90deg);
-            }
-            20% { 
-                transform: translate(5px, -5px);
-                opacity: 0.8;
-                filter: hue-rotate(180deg);
-            }
-            30% { 
-                transform: translate(-5px, -5px);
-                opacity: 0.7;
-                clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
-            }
-            40% { 
-                transform: translate(5px, 5px);
-                opacity: 0.6;
-                clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
-            }
-            50% { 
-                transform: translate(-3px, 3px) scale(0.98);
-                opacity: 0.5;
-                filter: hue-rotate(270deg) brightness(1.5);
-            }
-            60% { 
-                transform: translate(3px, -3px) scale(0.96);
-                opacity: 0.4;
-                clip-path: polygon(0 0, 100% 0, 100% 30%, 0 30%);
-            }
-            70% { 
-                transform: translate(-2px, 2px) scale(0.94);
-                opacity: 0.3;
-                filter: hue-rotate(180deg) contrast(2);
-            }
-            80% { 
-                transform: translate(2px, -2px) scale(0.9);
-                opacity: 0.2;
-                clip-path: polygon(0 70%, 100% 70%, 100% 100%, 0 100%);
-            }
-            90% { 
-                transform: translate(0) scale(0.8);
-                opacity: 0.1;
-                filter: blur(2px);
-            }
-            100% { 
-                transform: scale(0.5);
-                opacity: 0;
-                filter: blur(5px);
-            }
-        }
-
-        .glitch-delete {
-            animation: glitchDelete 0.6s ease-out forwards;
-            pointer-events: none;
-        }
-
-        /* --------------------------------
-           MOBILE RESPONSIVE STYLES
-           -------------------------------- */
-        
-        @media (max-width: 768px) {
-            body {
-                padding: 12px;
-            }
-
-            .container {
-                max-width: 100%;
-            }
-
-            /* Lock Screen */
-            #lockScreen h1 {
-                font-size: 2rem;
-                letter-spacing: 4px;
-            }
-
-            .lock-svg {
-                width: 80px;
-                height: 80px;
-                margin-bottom: 20px;
-            }
-
-            .security-text {
-                font-size: 0.75rem;
-                letter-spacing: 2px;
-                margin-bottom: 30px;
-            }
-
-            .auth-tabs {
-                gap: 12px;
-                margin-bottom: 20px;
-                width: 100%;
-            }
-
-            .auth-tab {
-                padding: 10px 20px;
-                font-size: 0.75rem;
-                letter-spacing: 1px;
-                flex: 1;
-            }
-
-            .auth-form {
-                width: 100%;
-                gap: 15px;
-            }
-
-            .auth-input {
-                padding: 12px 16px;
-                font-size: 0.9rem;
-            }
-
-            /* Header */
-            header {
-                flex-direction: column;
-                gap: 15px;
-                padding: 16px;
-                margin-bottom: 20px;
-            }
-
-            header > div {
-                width: 100%;
-                justify-content: center !important;
-                flex-wrap: wrap;
-            }
-
-            #installBtn {
-                order: -1;
-                width: 100%;
-                margin-bottom: 8px;
-            }
-
-            .logo-name {
-                font-size: 18px;
-            }
-
-            /* Input Section */
-            .input-section {
-                padding: 16px;
-                margin-bottom: 16px;
-            }
-
-            textarea {
-                min-height: 120px;
-                padding: 12px;
-                font-size: 0.9rem;
-            }
-
-            .input-row {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            input[type="text"] {
-                width: 100%;
-                min-width: 100%;
-            }
-
-            .btn {
-                padding: 12px 24px;
-                font-size: 0.85rem;
-                letter-spacing: 1px;
-                width: 100%;
-            }
-
-            /* Search and Filters */
-            .search-bar {
-                margin-bottom: 16px;
-            }
-
-            .search-bar input {
-                padding: 12px;
-                font-size: 1rem;
-            }
-
-            .filter-tab {
-                padding: 8px 12px;
-                font-size: 0.75rem;
-                letter-spacing: 0.5px;
-            }
-
-            /* Drop Items */
-            .drops-list {
-                gap: 12px;
-            }
-
-            .drop-item {
-                padding: 16px;
-            }
-
-            .drop-item:hover {
-                padding-left: 16px;
-            }
-
-            .drop-item::before {
-                display: none;
-            }
-
-            .drop-label {
-                font-size: 0.85rem;
-                margin-bottom: 6px;
-            }
-
-            .drop-text {
-                font-size: 0.9rem;
-            }
-
-            .drop-date {
-                font-size: 0.75rem;
-                margin-top: 8px;
-            }
-
-            /* Detail Panel */
-            .detail-panel {
-                padding: 12px;
-                align-items: flex-start;
-            }
-
-            .detail-content {
-                padding: 20px 16px;
-                max-height: 85vh;
-                width: 100%;
-            }
-
-            .detail-actions {
-                flex-direction: column;
-                gap: 10px;
-                margin-top: 16px;
-            }
-
-            .detail-actions .btn {
-                flex: none;
-                width: 100%;
-                min-width: 100%;
-                padding: 12px 20px;
-                font-size: 0.85rem;
-            }
-
-            /* Share Section */
-            .share-input {
-                padding: 10px 12px;
-                font-size: 0.9rem;
-            }
-
-            /* Decryption Screen */
-            .decrypt-text {
-                font-size: 1.2rem;
-                letter-spacing: 3px;
-                margin-bottom: 30px;
-                text-align: center;
-                padding: 0 20px;
-            }
-
-            .progress-bar {
-                width: 90%;
-                height: 30px;
-            }
-
-            .decrypt-status {
-                font-size: 0.85rem;
-                margin-top: 20px;
-                text-align: center;
-                padding: 0 20px;
-            }
-
-            /* Toast */
-            .toast-container {
-                bottom: 20px;
-                right: 20px;
-                left: 20px;
-            }
-
-            .toast {
-                padding: 12px 16px;
-                font-size: 0.85rem;
-            }
-
-            /* Character Count */
-            #charCount {
-                font-size: 0.75rem;
-            }
-
-            #stashCount {
-                font-size: 0.85rem;
-                margin-bottom: 12px;
-            }
-
-            #detailStats {
-                font-size: 0.75rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            #lockScreen h1 {
-                font-size: 1.5rem;
-                letter-spacing: 3px;
-            }
-
-            .auth-tab {
-                padding: 8px 16px;
-                font-size: 0.7rem;
-            }
-
-            .filter-tab {
-                padding: 8px 8px;
-                font-size: 0.7rem;
-            }
-
-            .detail-content {
-                padding: 16px 12px;
-            }
-
-            .detail-actions .btn {
-                padding: 12px 16px;
-                font-size: 0.8rem;
-            }
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary: #c9b87a;
+        --primary-dark: #a89660;
+        --accent: #d4c291;
+        --bg-dark: #0e0e0f;
+        --bg-card: #111112;
+        --bg-elevated: #1e1d1a;
+        --border: #2a2820;
+        --border-light: #1e1e1f;
+        --text-primary: #edeae0;
+        --text-secondary: #888;
+        --text-muted: #444;
+        --danger: #d45d5d;
+        --cyber-green: #c9b87a;
+        --cyber-blue: #6ea5d7;
+        --cyber-red: #d45d5d;
+      }
+
+      body {
+        font-family: "Syne", sans-serif;
+        background: var(--bg-dark);
+        color: var(--text-primary);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      body::after {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(
+          circle at 50% 50%,
+          rgba(201, 184, 122, 0.03) 0%,
+          transparent 50%
+        );
+        pointer-events: none;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+      }
+
+      #lockScreen {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 80vh;
+      }
+
+      #lockScreen.hidden {
+        display: none;
+      }
+
+      .auth-tabs {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .auth-tab {
+        padding: 10px 30px;
+        background: transparent;
+        border: 2px solid var(--border);
+        color: var(--text-muted);
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-family: "Syne", sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s;
+      }
+
+      .auth-tab.active {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: rgba(201, 184, 122, 0.05);
+        box-shadow: 0 0 15px rgba(201, 184, 122, 0.2);
+      }
+
+      .auth-form {
+        display: none;
+        flex-direction: column;
+        gap: 20px;
+        width: 400px;
+        max-width: 90%;
+      }
+
+      .auth-form.active {
+        display: flex;
+        animation: slideDown 0.5s ease;
+      }
+
+      .auth-input {
+        padding: 15px 20px;
+        font-family: "Courier Prime", monospace;
+        font-size: 1rem;
+        background: var(--bg-card);
+        border: 2px solid var(--border);
+        color: var(--text-primary);
+        border-radius: 8px;
+        text-align: center;
+        letter-spacing: 1px;
+        transition: all 0.3s;
+      }
+
+      .auth-input::placeholder {
+        color: var(--text-muted);
+      }
+
+      .auth-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 15px rgba(201, 184, 122, 0.2);
+      }
+
+      .lock-icon {
+        font-size: 5rem;
+        margin-bottom: 20px;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      .lock-svg {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 30px;
+        filter: drop-shadow(0 0 30px var(--primary));
+      }
+
+      .lock-svg .lock-body {
+        fill: none;
+        stroke: var(--primary);
+        stroke-width: 3;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        animation: lockPulse 2s ease-in-out infinite;
+      }
+
+      .lock-svg .lock-shackle {
+        fill: none;
+        stroke: var(--accent);
+        stroke-width: 3;
+        stroke-linecap: round;
+        animation: shackleFloat 3s ease-in-out infinite;
+      }
+
+      .lock-svg .lock-keyhole {
+        fill: var(--primary);
+        animation: keyholeGlow 2s ease-in-out infinite;
+      }
+
+      .lock-svg .particle {
+        fill: var(--primary);
+        opacity: 0;
+        animation: particleFloat 3s ease-in-out infinite;
+      }
+
+      .lock-svg .particle:nth-child(2) {
+        animation-delay: 0.5s;
+      }
+      .lock-svg .particle:nth-child(3) {
+        animation-delay: 1s;
+      }
+      .lock-svg .particle:nth-child(4) {
+        animation-delay: 1.5s;
+      }
+
+      @keyframes lockPulse {
+        0%,
+        100% {
+          stroke: var(--primary);
+          filter: drop-shadow(0 0 10px var(--primary));
+        }
+        50% {
+          stroke: var(--accent);
+          filter: drop-shadow(0 0 20px var(--accent));
+        }
+      }
+
+      @keyframes shackleFloat {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-5px);
+        }
+      }
+
+      @keyframes keyholeGlow {
+        0%,
+        100% {
+          fill: var(--primary);
+          filter: drop-shadow(0 0 5px var(--primary));
+        }
+        50% {
+          fill: var(--accent);
+          filter: drop-shadow(0 0 10px var(--accent));
+        }
+      }
+
+      @keyframes particleFloat {
+        0% {
+          opacity: 0;
+          transform: translateY(0) scale(0);
+        }
+        50% {
+          opacity: 1;
+          transform: translateY(-30px) scale(1);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(-60px) scale(0);
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+          text-shadow: 0 0 20px var(--primary);
+        }
+        50% {
+          opacity: 0.7;
+          text-shadow: 0 0 40px var(--primary);
+        }
+      }
+
+      #lockScreen h1 {
+        font-size: 3rem;
+        text-transform: uppercase;
+        letter-spacing: 8px;
+        text-shadow: 0 0 20px var(--primary);
+        margin-bottom: 10px;
+      }
+
+      .security-text {
+        color: var(--primary-dark);
+        font-size: 0.9rem;
+        margin-bottom: 40px;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+      }
+
+      #pinInputSection {
+        display: none;
+        gap: 15px;
+        margin: 30px 0;
+      }
+
+      #pinInputSection.visible {
+        display: flex;
+        animation: slideDown 0.5s ease;
+      }
+
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .pin-box {
+        width: 70px;
+        height: 80px;
+        text-align: center;
+        font-size: 2.5rem;
+        font-family: "Courier Prime", monospace;
+        background: var(--bg-card);
+        border: 2px solid var(--border);
+        color: var(--primary);
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(201, 184, 122, 0.2);
+      }
+
+      .pin-box:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 20px rgba(201, 184, 122, 0.3);
+      }
+
+      .btn {
+        padding: 15px 40px;
+        font-family: "Syne", sans-serif;
+        font-size: 0.9rem;
+        font-weight: 600;
+        background: transparent;
+        color: var(--primary);
+        border: 2px solid var(--border);
+        border-radius: 8px;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s;
+        z-index: 1;
+      }
+
+      .btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: var(--primary);
+        transition: left 0.3s;
+        z-index: -1;
+      }
+
+      .btn:hover::before {
+        left: 0;
+      }
+      .btn:hover {
+        color: var(--bg-dark);
+        border-color: var(--primary);
+        box-shadow: 0 0 20px rgba(201, 184, 122, 0.3);
+      }
+
+      .stash-logo {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .logo-mark {
+        position: relative;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .logo-mark-bg {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, #1e1d1a, #161514);
+        border-radius: 8px;
+        border: 1px solid var(--border);
+      }
+
+      .logo-mark-inner {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+      }
+
+      .drop-line {
+        width: 1.5px;
+        height: 8px;
+        background: linear-gradient(to bottom, transparent, var(--primary));
+        border-radius: 2px;
+      }
+
+      .drop-arrow {
+        width: 0;
+        height: 0;
+        border-left: 3px solid transparent;
+        border-right: 3px solid transparent;
+        border-top: 5px solid var(--primary);
+        filter: drop-shadow(0 0 4px rgba(201, 184, 122, 0.6));
+      }
+
+      .drop-shelf {
+        width: 14px;
+        height: 2px;
+        background: var(--primary);
+        border-radius: 2px;
+        box-shadow: 0 0 6px rgba(201, 184, 122, 0.4);
+      }
+
+      .logo-wordmark {
+        display: flex;
+        flex-direction: column;
+        line-height: 1;
+      }
+
+      .logo-name {
+        font-family: "Syne", sans-serif;
+        font-weight: 800;
+        font-size: 16px;
+        letter-spacing: -0.04em;
+        color: var(--text-primary);
+        text-transform: uppercase;
+      }
+
+      .logo-name span {
+        color: var(--primary);
+      }
+
+      .logo-sub {
+        font-family: "Courier Prime", monospace;
+        font-size: 8px;
+        letter-spacing: 0.16em;
+        color: #777;
+        margin-top: 2px;
+      }
+
+      #submitPinBtn {
+        display: none;
+      }
+      #submitPinBtn.visible {
+        display: block;
+        animation: slideDown 0.5s ease 0.2s both;
+      }
+
+      #decryptionScreen {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(14, 14, 15, 0.98);
+        z-index: 1000;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #decryptionScreen.active {
+        display: flex;
+      }
+
+      .decrypt-text {
+        font-size: 1.8rem;
+        color: var(--primary);
+        margin-bottom: 40px;
+        text-transform: uppercase;
+        letter-spacing: 5px;
+        animation: pulse 1s ease-in-out infinite;
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
+      }
+
+      .progress-bar {
+        width: 500px;
+        max-width: 90%;
+        height: 40px;
+        border: 2px solid var(--border);
+        border-radius: 8px;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 0 30px rgba(201, 184, 122, 0.2);
+        background: var(--bg-card);
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          var(--primary) 0%,
+          var(--accent) 50%,
+          var(--primary) 100%
+        );
+        width: 0%;
+        transition: width 0.1s linear;
+        box-shadow: 0 0 20px rgba(201, 184, 122, 0.4);
+      }
+
+      .decrypt-status {
+        margin-top: 30px;
+        font-size: 1rem;
+        color: var(--primary-dark);
+        min-height: 25px;
+        letter-spacing: 2px;
+        font-family: "Courier Prime", monospace;
+      }
+
+      #mainApp {
+        display: none;
+        animation: fadeIn 1s ease;
+      }
+      #mainApp.visible {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding: 20px 24px;
+        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        background: var(--bg-card);
+      }
+
+      header h1 {
+        font-size: 2rem;
+        text-transform: uppercase;
+        letter-spacing: 4px;
+      }
+
+      .btn-secondary {
+        color: var(--text-secondary);
+      }
+
+      .btn-secondary::before {
+        background: var(--text-secondary);
+      }
+      .btn-secondary:hover {
+        border-color: var(--text-secondary);
+        box-shadow: 0 0 20px rgba(136, 136, 136, 0.3);
+      }
+
+      .btn-danger {
+        color: var(--danger);
+      }
+
+      .btn-danger::before {
+        background: var(--danger);
+      }
+      .btn-danger:hover {
+        border-color: var(--danger);
+        box-shadow: 0 0 20px rgba(212, 93, 93, 0.3);
+      }
+
+      .input-section {
+        background: var(--bg-card);
+        padding: 25px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        border: 1px solid var(--border-light);
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 150px;
+        padding: 15px;
+        font-family: "Courier Prime", monospace;
+        font-size: 1rem;
+        background: var(--bg-dark);
+        border: 2px solid var(--border);
+        color: var(--text-primary);
+        border-radius: 8px;
+        resize: vertical;
+        margin-bottom: 15px;
+        transition: all 0.3s;
+      }
+
+      textarea:focus,
+      input[type="text"]:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 15px rgba(201, 184, 122, 0.2);
+      }
+
+      .input-row {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+      }
+
+      input[type="text"] {
+        flex: 1;
+        min-width: 200px;
+        padding: 12px 15px;
+        font-family: "Courier Prime", monospace;
+        font-size: 1rem;
+        background: var(--bg-dark);
+        border: 2px solid var(--border);
+        color: var(--text-primary);
+        border-radius: 8px;
+        transition: all 0.3s;
+      }
+
+      .search-bar {
+        margin-bottom: 20px;
+      }
+      .search-bar input {
+        width: 100%;
+        padding: 15px;
+        font-size: 1.1rem;
+        border: 2px solid var(--border);
+        border-radius: 8px;
+      }
+
+      .filter-tab {
+        flex: 1;
+        padding: 10px 20px;
+        background: transparent;
+        border: 2px solid var(--border);
+        color: var(--text-muted);
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-family: "Syne", sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s;
+      }
+
+      .filter-tab.active {
+        border-color: var(--primary);
+        color: var(--primary);
+        box-shadow: 0 0 15px rgba(201, 184, 122, 0.2);
+        background: rgba(201, 184, 122, 0.05);
+      }
+
+      .filter-tab:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+
+      .drops-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .drop-item {
+        background: var(--bg-card);
+        padding: 20px;
+        border-radius: 12px;
+        cursor: pointer;
+        border: 1px solid var(--border-light);
+        position: relative;
+        transition: all 0.3s;
+      }
+
+      .drop-item::before {
+        content: ">";
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--primary);
+        font-size: 1.5rem;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .drop-item:hover {
+        border-color: var(--primary);
+        box-shadow: 0 0 20px rgba(201, 184, 122, 0.2);
+        padding-left: 40px;
+      }
+
+      .drop-item:hover::before {
+        opacity: 1;
+      }
+
+      .drop-label {
+        color: var(--primary);
+        font-weight: 700;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-family: "Syne", sans-serif;
+      }
+
+      .drop-text {
+        font-size: 0.95rem;
+        color: var(--text-primary);
+        white-space: pre-wrap;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        -webkit-box-orient: vertical;
+        font-family: "Courier Prime", monospace;
+      }
+
+      .drop-date {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        margin-top: 10px;
+        font-family: "Courier Prime", monospace;
+      }
+
+      .detail-panel {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(14, 14, 15, 0.95);
+        z-index: 100;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .detail-panel.active {
+        display: flex;
+      }
+
+      .detail-content {
+        background: var(--bg-card);
+        max-width: 700px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        padding: 30px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        box-shadow: 0 0 40px rgba(201, 184, 122, 0.2);
+      }
+
+      .detail-content .drop-text {
+        -webkit-line-clamp: unset;
+        line-clamp: unset;
+        margin-bottom: 20px;
+        max-height: 50vh;
+        overflow-y: auto;
+      }
+
+      .detail-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+      .detail-actions .btn {
+        flex: 1;
+        padding: 12px 20px;
+        font-size: 0.85rem;
+      }
+
+      .share-section {
+        margin-top: 25px;
+        padding-top: 25px;
+        border-top: 1px solid var(--border-light);
+      }
+
+      .share-input {
+        width: 100%;
+        padding: 12px 15px;
+        font-family: "Courier Prime", monospace;
+        font-size: 1rem;
+        background: var(--bg-dark);
+        border: 2px solid var(--border);
+        color: var(--text-primary);
+        border-radius: 8px;
+        margin-bottom: 10px;
+        transition: all 0.3s;
+      }
+
+      .share-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 15px rgba(201, 184, 122, 0.2);
+      }
+
+      .share-input::placeholder {
+        color: var(--text-muted);
+      }
+
+      .toast-container {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        z-index: 200;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .toast {
+        background: var(--bg-card);
+        padding: 15px 25px;
+        border-radius: 8px;
+        border: 1px solid var(--primary);
+        animation: slideIn 0.3s ease;
+        box-shadow: 0 0 20px rgba(201, 184, 122, 0.2);
+        color: var(--primary);
+        font-family: "Syne", sans-serif;
+        font-weight: 600;
+        letter-spacing: 1px;
+      }
+
+      .toast.error {
+        border-color: var(--danger);
+        box-shadow: 0 0 20px rgba(212, 93, 93, 0.2);
+        color: var(--danger);
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(100px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes glitchDelete {
+        0% {
+          transform: translate(0);
+          opacity: 1;
+        }
+        10% {
+          transform: translate(-5px, 5px);
+          opacity: 0.9;
+          filter: hue-rotate(90deg);
+        }
+        20% {
+          transform: translate(5px, -5px);
+          opacity: 0.8;
+          filter: hue-rotate(180deg);
+        }
+        30% {
+          transform: translate(-5px, -5px);
+          opacity: 0.7;
+          clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+        }
+        40% {
+          transform: translate(5px, 5px);
+          opacity: 0.6;
+          clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+        }
+        50% {
+          transform: translate(-3px, 3px) scale(0.98);
+          opacity: 0.5;
+          filter: hue-rotate(270deg) brightness(1.5);
+        }
+        60% {
+          transform: translate(3px, -3px) scale(0.96);
+          opacity: 0.4;
+          clip-path: polygon(0 0, 100% 0, 100% 30%, 0 30%);
+        }
+        70% {
+          transform: translate(-2px, 2px) scale(0.94);
+          opacity: 0.3;
+          filter: hue-rotate(180deg) contrast(2);
+        }
+        80% {
+          transform: translate(2px, -2px) scale(0.9);
+          opacity: 0.2;
+          clip-path: polygon(0 70%, 100% 70%, 100% 100%, 0 100%);
+        }
+        90% {
+          transform: translate(0) scale(0.8);
+          opacity: 0.1;
+          filter: blur(2px);
+        }
+        100% {
+          transform: scale(0.5);
+          opacity: 0;
+          filter: blur(5px);
+        }
+      }
+
+      .glitch-delete {
+        animation: glitchDelete 0.6s ease-out forwards;
+        pointer-events: none;
+      }
     </style>
-<style>
-        @font-face {
-            font-family: 'NotoSans_online_security'; 
-            src: url(chrome-extension://llbcnfanfmjhpedaedhbcnpgeepdnnok/assets/fonts/noto-sans-regular.woff);
-        }
+    <style>
+      @font-face {
+        font-family: "NotoSans_online_security";
+        src: url(chrome-extension://llbcnfanfmjhpedaedhbcnpgeepdnnok/assets/fonts/noto-sans-regular.woff);
+      }
 
-        @font-face {
-            font-family: 'NotoSans_medium_online_security'; 
-            src: url(chrome-extension://llbcnfanfmjhpedaedhbcnpgeepdnnok/assets/fonts/noto-sans-medium.ttf);
-        }
+      @font-face {
+        font-family: "NotoSans_medium_online_security";
+        src: url(chrome-extension://llbcnfanfmjhpedaedhbcnpgeepdnnok/assets/fonts/noto-sans-medium.ttf);
+      }
 
-        @font-face {
-            font-family: 'NotoSans_bold_online_security'; 
-            src: url(chrome-extension://llbcnfanfmjhpedaedhbcnpgeepdnnok/assets/fonts/noto-sans-bold.woff);
-        }
+      @font-face {
+        font-family: "NotoSans_bold_online_security";
+        src: url(chrome-extension://llbcnfanfmjhpedaedhbcnpgeepdnnok/assets/fonts/noto-sans-bold.woff);
+      }
 
-        @font-face {
-            font-family: 'NotoSans_semibold_online_security'; 
-            src: url(chrome-extension://llbcnfanfmjhpedaedhbcnpgeepdnnok/assets/fonts/noto-sans-semibold.ttf);
-        }
-</style></head>
-<body>
-    <!-- Landing Page (Website Only) -->
-    <div id="landingPage">
-        <div class="landing-hero">
-            <div class="landing-logo-large">
-                <div class="landing-logo-mark">
-                    <div class="landing-logo-mark-bg"></div>
-                    <div class="landing-logo-mark-inner">
-                        <div class="landing-drop-line"></div>
-                        <div class="landing-drop-arrow"></div>
-                        <div class="landing-drop-shelf"></div>
-                    </div>
-                </div>
-                <div class="landing-wordmark">
-                    <h1>STASH</h1>
-                </div>
-            </div>
-            
-            <p class="landing-tagline">Save here. Access everywhere.</p>
-            
-            <div class="landing-features">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="5" y="11" width="14" height="10" rx="2" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M12 17C12.5523 17 13 16.5523 13 16C13 15.4477 12.5523 15 12 15C11.4477 15 11 15.4477 11 16C11 16.5523 11.4477 17 12 17Z" fill="var(--primary)"/>
-                            <path d="M8 11V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V11" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <div class="feature-title">Secure Storage</div>
-                    <div class="feature-desc">Your data is encrypted and stored securely in the cloud. Access it from anywhere, anytime.</div>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M21.5 2V8M21.5 8H15.5M21.5 8L18 4.5C16.5 3 14.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22C17 22 21.5 18 21.5 13" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <circle cx="12" cy="12" r="3" stroke="var(--primary)" stroke-width="2"/>
-                        </svg>
-                    </div>
-                    <div class="feature-title">Real-Time Sync</div>
-                    <div class="feature-desc">Changes sync instantly across all your devices. Never lose your important notes again.</div>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="9" cy="7" r="4" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M2 21V19C2 16.7909 3.79086 15 6 15H12C14.2091 15 16 16.7909 16 19V21" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M16 11C17.6569 11 19 9.65685 19 8C19 6.34315 17.6569 5 16 5" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M19 15C20.6569 15 22 16.3431 22 18V21" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <div class="feature-title">Easy Sharing</div>
-                    <div class="feature-desc">Share your stashes with friends and colleagues. Collaborate seamlessly in real-time.</div>
-                </div>
-            </div>
-            
-            <div class="landing-cta">
-                <button class="cta-btn" onclick="goToApp()">GET STARTED</button>
-                <button class="cta-btn cta-btn-secondary" onclick="goToApp()">SIGN IN</button>
-            </div>
-        </div>
-        
-        <div class="landing-footer">
-            <div class="landing-credit">
-                Built by <a href="https://www.linkedin.com/in/tochi-ajero-663121388" target="_blank" rel="noopener noreferrer">Rex - Rexence</a>
-            </div>
-        </div>
-    </div>
-
+      @font-face {
+        font-family: "NotoSans_semibold_online_security";
+        src: url(chrome-extension://llbcnfanfmjhpedaedhbcnpgeepdnnok/assets/fonts/noto-sans-semibold.ttf);
+      }
+    </style>
+  </head>
+  <body>
     <div class="container">
-        <div id="lockScreen">
-            <svg class="lock-svg" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
-                <!-- Particles -->
-                <circle class="particle" cx="20" cy="60" r="2"></circle>
-                <circle class="particle" cx="80" cy="60" r="2"></circle>
-                <circle class="particle" cx="35" cy="45" r="1.5"></circle>
-                <circle class="particle" cx="65" cy="45" r="1.5"></circle>
-                
-                <!-- Lock Shackle -->
-                <path class="lock-shackle" d="M 30 40 Q 30 15, 50 15 Q 70 15, 70 40"></path>
-                
-                <!-- Lock Body -->
-                <rect class="lock-body" x="25" y="45" width="50" height="55" rx="8"></rect>
-                
-                <!-- Keyhole -->
-                <circle class="lock-keyhole" cx="50" cy="70" r="6"></circle>
-                <rect class="lock-keyhole" x="47" y="70" width="6" height="15" rx="2"></rect>
-                
-                <!-- Circuit lines -->
-                <line class="lock-body" x1="35" y1="55" x2="45" y2="55" stroke-width="1"></line>
-                <line class="lock-body" x1="55" y1="55" x2="65" y2="55" stroke-width="1"></line>
-                <line class="lock-body" x1="35" y1="90" x2="45" y2="90" stroke-width="1"></line>
-                <line class="lock-body" x1="55" y1="90" x2="65" y2="90" stroke-width="1"></line>
-            </svg>
-            <h1>STASH</h1>
-            <div class="security-text">Save here. Access Everywhere</div>
-            
-            <!-- Install Button on Lock Screen -->
-            <button class="btn" id="installBtnLock" style="padding: 10px 30px; font-size: 0.85rem; margin-bottom: 30px;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; vertical-align: middle; margin-right: 8px;">
-                    <path d="M12 15V3M12 15L8 11M12 15L16 11M3 17V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 19V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                INSTALL APP
+      <div id="lockScreen">
+        <svg
+          class="lock-svg"
+          viewBox="0 0 100 120"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <!-- Particles -->
+          <circle class="particle" cx="20" cy="60" r="2"></circle>
+          <circle class="particle" cx="80" cy="60" r="2"></circle>
+          <circle class="particle" cx="35" cy="45" r="1.5"></circle>
+          <circle class="particle" cx="65" cy="45" r="1.5"></circle>
+
+          <!-- Lock Shackle -->
+          <path
+            class="lock-shackle"
+            d="M 30 40 Q 30 15, 50 15 Q 70 15, 70 40"
+          ></path>
+
+          <!-- Lock Body -->
+          <rect
+            class="lock-body"
+            x="25"
+            y="45"
+            width="50"
+            height="55"
+            rx="8"
+          ></rect>
+
+          <!-- Keyhole -->
+          <circle class="lock-keyhole" cx="50" cy="70" r="6"></circle>
+          <rect
+            class="lock-keyhole"
+            x="47"
+            y="70"
+            width="6"
+            height="15"
+            rx="2"
+          ></rect>
+
+          <!-- Circuit lines -->
+          <line
+            class="lock-body"
+            x1="35"
+            y1="55"
+            x2="45"
+            y2="55"
+            stroke-width="1"
+          ></line>
+          <line
+            class="lock-body"
+            x1="55"
+            y1="55"
+            x2="65"
+            y2="55"
+            stroke-width="1"
+          ></line>
+          <line
+            class="lock-body"
+            x1="35"
+            y1="90"
+            x2="45"
+            y2="90"
+            stroke-width="1"
+          ></line>
+          <line
+            class="lock-body"
+            x1="55"
+            y1="90"
+            x2="65"
+            y2="90"
+            stroke-width="1"
+          ></line>
+        </svg>
+        <h1>STASH</h1>
+        <div class="security-text">Save here. Access Everywhere</div>
+
+        <div class="auth-tabs">
+          <button class="auth-tab active" onclick="switchTab('login')">
+            LOGIN
+          </button>
+          <button class="auth-tab" onclick="switchTab('signup')">
+            SIGN UP
+          </button>
+        </div>
+
+        <div class="auth-form active" id="loginForm">
+          <input
+            type="text"
+            class="auth-input"
+            id="loginNickname"
+            placeholder="NICKNAME"
+          />
+          <input
+            type="password"
+            class="auth-input"
+            id="loginPassword"
+            placeholder="PASSWORD"
+          />
+          <button class="btn" onclick="login()">OPEN STASH</button>
+        </div>
+
+        <div class="auth-form" id="signupForm">
+          <input
+            type="text"
+            class="auth-input"
+            id="signupNickname"
+            placeholder="CHOOSE NICKNAME"
+          />
+          <input
+            type="password"
+            class="auth-input"
+            id="signupPassword"
+            placeholder="CHOOSE PASSWORD"
+          />
+          <input
+            type="password"
+            class="auth-input"
+            id="signupConfirm"
+            placeholder="CONFIRM PASSWORD"
+          />
+          <button class="btn" onclick="signup()">CREATE STASH</button>
+        </div>
+      </div>
+
+      <div id="mainApp">
+        <header>
+          <a class="stash-logo sm" href="#">
+            <div class="logo-mark">
+              <div class="logo-mark-bg"></div>
+              <div class="logo-mark-inner">
+                <div class="drop-line"></div>
+                <div class="drop-arrow"></div>
+                <div class="drop-shelf"></div>
+              </div>
+            </div>
+            <div class="logo-wordmark">
+              <div class="logo-name">ST<span>A</span>SH</div>
+            </div>
+          </a>
+          <div style="display: flex; gap: 15px; align-items: center">
+            <span
+              style="
+                color: var(--primary);
+                font-size: 0.9rem;
+                letter-spacing: 2px;
+                font-family: &quot;Courier Prime&quot;, monospace;
+              "
+              id="userDisplay"
+              >USER: REX</span
+            >
+            <button class="btn btn-secondary" onclick="logout()">LOGOUT</button>
+          </div>
+        </header>
+        <div class="input-section">
+          <textarea id="textInput" placeholder="STASH YOUR DATA..."></textarea>
+          <div
+            style="
+              color: var(--text-secondary);
+              font-size: 0.85rem;
+              margin-bottom: 15px;
+              letter-spacing: 1px;
+              font-family: &quot;Courier Prime&quot;, monospace;
+            "
+            id="charCount"
+          >
+            0 CHARACTERS | 0 WORDS
+          </div>
+          <div class="input-row">
+            <input type="text" id="labelInput" placeholder="LABEL (OPTIONAL)" />
+            <button class="btn" id="saveBtn">STASH IT</button>
+          </div>
+        </div>
+        <div class="search-bar">
+          <div style="display: flex; gap: 10px; margin-bottom: 15px">
+            <button
+              class="filter-tab active"
+              data-filter="all"
+              onclick="filterByType('all')"
+            >
+              ALL
             </button>
-            
-            <div class="auth-tabs">
-                <button class="auth-tab active" onclick="switchTab('login')">LOGIN</button>
-                <button class="auth-tab" onclick="switchTab('signup')">SIGN UP</button>
-            </div>
-
-            <div class="auth-form active" id="loginForm">
-                <input type="text" class="auth-input" id="loginNickname" placeholder="USERNAME">
-                <input type="password" class="auth-input" id="loginPassword" placeholder="PASSWORD">
-                <label style="display: flex; align-items: center; gap: 10px; color: var(--text-secondary); font-size: 0.85rem; letter-spacing: 1px; font-family: 'Courier Prime', monospace; cursor: pointer; justify-content: center;">
-                    <input type="checkbox" id="rememberMe" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary);">
-                    <span>REMEMBER ME</span>
-                </label>
-                <button class="btn btn-glow" onclick="login()">OPEN STASH</button>
-            </div>
-
-            <div class="auth-form" id="signupForm">
-                <input type="text" class="auth-input" id="signupNickname" placeholder="CHOOSE USERNAME">
-                <input type="password" class="auth-input" id="signupPassword" placeholder="CHOOSE PASSWORD">
-                <input type="password" class="auth-input" id="signupConfirm" placeholder="CONFIRM PASSWORD">
-                <button class="btn" onclick="signup()">CREATE STASH</button>
-            </div>
+            <button
+              class="filter-tab"
+              data-filter="mine"
+              onclick="filterByType('mine')"
+            >
+              MY STASHES
+            </button>
+            <button
+              class="filter-tab"
+              data-filter="shared"
+              onclick="filterByType('shared')"
+            >
+              SHARED WITH ME
+            </button>
+          </div>
+          <div style="position: relative">
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="SEARCH YOUR STASH..."
+            />
+            <button
+              id="clearSearch"
+              style="
+                display: none;
+                position: absolute;
+                right: 15px;
+                top: 50%;
+                transform: translateY(-50%);
+                background: transparent;
+                border: none;
+                color: var(--danger);
+                cursor: pointer;
+                font-size: 1.2rem;
+                padding: 5px;
+              "
+              onclick="clearSearch()"
+            >
+              ✕
+            </button>
+          </div>
         </div>
-
-        <div id="mainApp">
-            <header>
-                <a class="stash-logo sm" href="#">
-                    <div class="logo-mark">
-                        <div class="logo-mark-bg"></div>
-                        <div class="logo-mark-inner">
-                            <div class="drop-line"></div>
-                            <div class="drop-arrow"></div>
-                            <div class="drop-shelf"></div>
-                        </div>
-                    </div>
-                    <div class="logo-wordmark">
-                        <div class="logo-name">ST<span>A</span>SH</div>
-                    </div>
-                </a>
-                <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
-                    <button class="btn" id="installBtn" style="padding: 10px 20px; font-size: 0.8rem;">INSTALL APP</button>
-                    <div style="position: relative; display: inline-block;">
-                        <button class="btn" onclick="filterByType('shared')" style="padding: 10px 20px; font-size: 0.8rem; position: relative;">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; vertical-align: middle;">
-                                <path d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 6.65685 16.3431 8 18 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M6 15C7.65685 15 9 13.6569 9 12C9 10.3431 7.65685 9 6 9C4.34315 9 3 10.3431 3 12C3 13.6569 4.34315 15 6 15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M18 22C19.6569 22 21 20.6569 21 19C21 17.3431 19.6569 16 18 16C16.3431 16 15 17.3431 15 19C15 20.6569 16.3431 22 18 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M8.59 13.51L15.42 17.49" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M15.41 6.51L8.59 10.49" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </button>
-                        <span id="notificationBadge" style="display: none; position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; border-radius: 50%; width: 22px; height: 22px; font-size: 0.7rem; font-weight: 700; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(212, 93, 93, 0.5);">0</span>
-                    </div>
-                    <span style="color: var(--primary); font-size: 0.9rem; letter-spacing: 2px; font-family: 'Courier Prime', monospace;" id="userDisplay">USER: REX</span>
-                    <button class="btn btn-secondary" onclick="logout()">LOGOUT</button>
-                </div>
-            </header>
-            <div class="input-section" style="display: none;">
-                <textarea id="textInput" placeholder="STASH YOUR DATA..."></textarea>
-                <div style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 15px; letter-spacing: 1px; font-family: 'Courier Prime', monospace;" id="charCount">0 CHARACTERS | 0 WORDS</div>
-                <div class="input-row">
-                    <input type="text" id="labelInput" placeholder="LABEL (OPTIONAL)">
-                    <button class="btn" id="saveBtn">STASH IT</button>
-                </div>
-            </div>
-            <div class="search-bar">
-                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                    <button class="filter-tab active" data-filter="all" onclick="filterByType('all')">ALL</button>
-                    <button class="filter-tab" data-filter="mine" onclick="filterByType('mine')">MY STASHES</button>
-                    <button class="filter-tab" data-filter="shared" onclick="filterByType('shared')">SHARED WITH ME</button>
-                </div>
-                <div class="category-filter" id="categoryFilter">
-                    <button class="category-filter-btn active" onclick="filterByCategory('all')" data-category="all" style="border-color: var(--primary); color: var(--primary);">ALL</button>
-                </div>
-                <div style="position: relative;">
-                    <input type="text" id="searchInput" placeholder="SEARCH YOUR STASH...">
-                    <button id="clearSearch" style="display: none; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: var(--danger); cursor: pointer; font-size: 1.2rem; padding: 5px;" onclick="clearSearch()">?</button>
-                </div>
-            </div>
-            <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 15px; letter-spacing: 2px; text-transform: uppercase; font-family: 'Syne', sans-serif; font-weight: 600;" id="stashCount">0 STASHES</div>
-            <div class="drops-list" id="dropsList">
-                <!-- Drops will be loaded here dynamically -->
-            </div>
+        <div
+          style="
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-family: &quot;Syne&quot;, sans-serif;
+            font-weight: 600;
+          "
+          id="stashCount"
+        >
+          0 STASHES
         </div>
-
-        <!-- Plus Button -->
-        <button class="plus-btn" onclick="openCategoryModal()" style="display: none;" id="plusBtn">+</button>
-
-        <!-- Category Modal -->
-        <div class="category-modal" id="categoryModal">
-            <div class="category-modal-content">
-                <h2 style="font-family: 'Syne', sans-serif; font-size: 1.5rem; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px;">CREATE NEW STASH</h2>
-                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 20px; font-family: 'Courier Prime', monospace;">SELECT A CATEGORY</p>
-                
-                <div class="category-grid" id="categoryGrid">
-                    <!-- Categories will be populated here -->
-                </div>
-
-                <textarea id="modalTextInput" placeholder="STASH YOUR DATA..." style="width: 100%; min-height: 150px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; padding: 15px; color: var(--text-primary); font-family: 'Courier Prime', monospace; font-size: 0.9rem; resize: vertical; margin-top: 20px;"></textarea>
-                
-                <div style="color: var(--text-secondary); font-size: 0.85rem; margin: 10px 0; letter-spacing: 1px; font-family: 'Courier Prime', monospace;" id="modalCharCount">0 CHARACTERS | 0 WORDS</div>
-                
-                <input type="text" id="modalLabelInput" placeholder="LABEL (OPTIONAL)" style="width: 100%; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; padding: 15px; color: var(--text-primary); font-family: 'Courier Prime', monospace; font-size: 0.9rem; margin-bottom: 20px;">
-
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn" onclick="saveDropFromModal()" style="flex: 1;">STASH IT</button>
-                    <button class="btn btn-secondary" onclick="closeCategoryModal()" style="flex: 1;">CANCEL</button>
-                </div>
+        <div class="drops-list" id="dropsList">
+          <div
+            class="drop-item"
+            onclick="openDetail('4b02eb9c-bbbe-4287-9321-4bc183f3c758')"
+          >
+            <div
+              style="
+                color: var(--accent);
+                font-size: 0.8rem;
+                margin-bottom: 5px;
+                text-transform: uppercase;
+                font-family: &quot;Syne&quot;, sans-serif;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+              "
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                style="flex-shrink: 0"
+              >
+                <path
+                  d="M16 5L19 8M19 8L16 11M19 8H9M8 19L5 16M5 16L8 13M5 16H15"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              <span>SHARED BY Tochi</span>
             </div>
+            <div class="drop-label">First share</div>
+            <div class="drop-text">Hello Rex</div>
+            <div class="drop-date">May 21, 2026, 07:19 PM</div>
+          </div>
+
+          <div
+            class="drop-item"
+            onclick="openDetail('49f2d4cc-6511-4f97-8c50-394fb393b08e')"
+          >
+            <div class="drop-label">Testing my app</div>
+            <div class="drop-text">
+              My first saved text in my vault, I am so happy
+            </div>
+            <div class="drop-date">May 21, 2026, 06:13 PM</div>
+          </div>
         </div>
+      </div>
     </div>
 
     <div id="decryptionScreen" class="">
-        <div class="decrypt-text">DECRYPTING SECURE VAULT</div>
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
-        </div>
-        <div class="decrypt-status" id="decryptStatus"></div>
+      <div class="decrypt-text">DECRYPTING SECURE VAULT</div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+      <div class="decrypt-status" id="decryptStatus"></div>
     </div>
 
     <div class="detail-panel" id="detailPanel">
-        <div class="detail-content">
-            <div class="drop-label" id="detailLabel" style="display: none;"></div>
-            <div class="drop-text" id="detailText"></div>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-                <div class="drop-date" id="detailDate"></div>
-                <div style="color: var(--text-secondary); font-size: 0.8rem; letter-spacing: 1px; font-family: 'Courier Prime', monospace;" id="detailStats"></div>
-            </div>
-            <div class="detail-actions">
-                <button class="btn" id="copyBtn">COPY</button>
-                <button class="btn" id="editBtn">EDIT</button>
-                <button class="btn btn-danger" id="deleteBtn">DELETE</button>
-                <button class="btn btn-secondary" id="closeBtn">CLOSE</button>
-            </div>
-            <div class="share-section" style="display: block;">
-                <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 10px 0;" onclick="toggleShareSection()">
-                    <div style="color: var(--primary); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; font-family: 'Syne', sans-serif; font-weight: 600;">SHARE WITH USER</div>
-                    <span id="shareToggleIcon" style="color: var(--primary); font-size: 1.2rem;">▼</span>
-                </div>
-                <div id="shareContent" style="display: block;">
-                    <input type="text" class="share-input" id="shareUsername" placeholder="ENTER USERNAME">
-                    <button class="btn" id="shareBtn" style="width: 100%; margin-bottom: 20px;">SHARE</button>
-                    
-                    <div id="shareHistory" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-light);">
-                        <div style="color: var(--primary); font-size: 0.9rem; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; font-family: 'Syne', sans-serif; font-weight: 600;">SHARED WITH</div>
-                        <div id="sharedUsersList"></div>
-                    </div>
-                </div>
-            </div>
+      <div class="detail-content">
+        <div class="drop-label" id="detailLabel" style="display: block">
+          Testing my app
         </div>
+        <div class="drop-text" id="detailText">
+          My first saved text in my vault, I am so happy
+        </div>
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+          "
+        >
+          <div class="drop-date" id="detailDate">May 21, 2026, 06:13 PM</div>
+          <div
+            style="
+              color: var(--text-secondary);
+              font-size: 0.8rem;
+              letter-spacing: 1px;
+              font-family: &quot;Courier Prime&quot;, monospace;
+            "
+            id="detailStats"
+          ></div>
+        </div>
+        <div class="detail-actions">
+          <button class="btn" id="copyBtn">COPY</button>
+          <button class="btn" id="editBtn">EDIT</button>
+          <button class="btn btn-danger" id="deleteBtn">DELETE</button>
+          <button class="btn btn-secondary" id="closeBtn">CLOSE</button>
+        </div>
+        <div class="share-section" style="display: block">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              cursor: pointer;
+              padding: 10px 0;
+            "
+            onclick="toggleShareSection()"
+          >
+            <div
+              style="
+                color: var(--primary);
+                font-size: 0.9rem;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                font-family: &quot;Syne&quot;, sans-serif;
+                font-weight: 600;
+              "
+            >
+              SHARE WITH USER
+            </div>
+            <span
+              id="shareToggleIcon"
+              style="color: var(--primary); font-size: 1.2rem"
+              >▼</span
+            >
+          </div>
+          <div id="shareContent" style="display: block">
+            <input
+              type="text"
+              class="share-input"
+              id="shareUsername"
+              placeholder="ENTER USERNAME"
+            />
+            <button
+              class="btn"
+              id="shareBtn"
+              style="width: 100%; margin-bottom: 20px"
+            >
+              SHARE
+            </button>
+
+            <div
+              id="shareHistory"
+              style="
+                margin-top: 20px;
+                padding-top: 20px;
+                border-top: 1px solid var(--border-light);
+              "
+            >
+              <div
+                style="
+                  color: var(--primary);
+                  font-size: 0.9rem;
+                  margin-bottom: 10px;
+                  text-transform: uppercase;
+                  letter-spacing: 2px;
+                  font-family: &quot;Syne&quot;, sans-serif;
+                  font-weight: 600;
+                "
+              >
+                SHARED WITH
+              </div>
+              <div id="sharedUsersList"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="toast-container" id="toastContainer"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const SUPABASE_URL = "https://rwlsfwvtldlvhpoiylpi.supabase.co";
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ3bHNmd3Z0bGRsdmhwb2l5bHBpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzNTYwNDcsImV4cCI6MjA5MzkzMjA0N30.qAi4YCWFml4csA3VtpdnUhniKkUi3OZTAIdI716aUNg";
-        const TABLE_NAME = "drops";
-        const USERS_TABLE = "users";
-        const SHARES_TABLE = "shared_drops";
-        
-        // Categories with colors
-        const CATEGORIES = [
-            { id: 'personal', name: 'Personal', color: '#7B68EE' },
-            { id: 'work', name: 'Work', color: '#FF6B6B' },
-            { id: 'ideas', name: 'Ideas', color: '#4ECDC4' },
-            { id: 'links', name: 'Links', color: '#FFD93D' },
-            { id: 'notes', name: 'Notes', color: '#95E1D3' },
-            { id: 'code', name: 'Code', color: '#F38181' },
-            { id: 'other', name: 'Other', color: '#AA96DA' }
-        ];
-        
-        var sbClient;
-        var drops = [];
-        var currentDrop = null;
-        var currentUser = null;
-        var currentFilter = 'all';
-        var currentCategory = 'all';
-        var deferredPrompt = null;
+      const SUPABASE_URL = "https://rwlsfwvtldlvhpoiylpi.supabase.co";
+      const SUPABASE_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ3bHNmd3Z0bGRsdmhwb2l5bHBpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzNTYwNDcsImV4cCI6MjA5MzkzMjA0N30.qAi4YCWFml4csA3VtpdnUhniKkUi3OZTAIdI716aUNg";
+      const TABLE_NAME = "drops";
+      const USERS_TABLE = "users";
+      const SHARES_TABLE = "shared_drops";
 
-        window.addEventListener('DOMContentLoaded', () => {
-            sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-            setupEventListeners();
-            checkLandingPage();
-            checkSession();
-            registerServiceWorker();
-            setupInstallPrompt();
+      var sbClient;
+      var drops = [];
+      var currentDrop = null;
+      var currentUser = null;
+      var currentFilter = "all";
+
+      window.addEventListener("DOMContentLoaded", () => {
+        sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        setupEventListeners();
+        checkSession();
+        registerServiceWorker();
+      });
+
+      function registerServiceWorker() {
+        if ("serviceWorker" in navigator) {
+          // First, unregister old service workers and clear old caches
+          navigator.serviceWorker
+            .getRegistrations()
+            .then(function (registrations) {
+              for (let registration of registrations) {
+                registration.unregister();
+              }
+            });
+
+          caches.keys().then(function (names) {
+            for (let name of names) {
+              if (name !== "stash-v2-theme") {
+                caches.delete(name);
+              }
+            }
+          });
+
+          // Register new service worker after a short delay
+          setTimeout(() => {
+            navigator.serviceWorker
+              .register("sw.js")
+              .then((reg) => {
+                console.log("Service Worker v2 registered");
+                reg.update();
+              })
+              .catch((err) =>
+                console.log("Service Worker registration failed:", err),
+              );
+          }, 500);
+        }
+      }
+
+      function setupEventListeners() {
+        document.getElementById("saveBtn").addEventListener("click", saveDrop);
+        document.getElementById("searchInput").addEventListener("input", () => {
+          filterDrops();
+          toggleClearButton();
         });
+        document
+          .getElementById("textInput")
+          .addEventListener("input", updateCharCount);
+        document.getElementById("copyBtn").addEventListener("click", copyDrop);
+        document.getElementById("editBtn").addEventListener("click", editDrop);
+        document
+          .getElementById("deleteBtn")
+          .addEventListener("click", confirmDelete);
+        document
+          .getElementById("closeBtn")
+          .addEventListener("click", closeDetail);
+        document
+          .getElementById("shareBtn")
+          .addEventListener("click", shareDrop);
+        document
+          .getElementById("detailPanel")
+          .addEventListener("click", (e) => {
+            if (e.target.id === "detailPanel") closeDetail();
+          });
 
-        function checkLandingPage() {
-            // Check if running as PWA (standalone mode)
-            const isPWA = window.matchMedia('(display-mode: standalone)').matches || 
-                          window.navigator.standalone === true;
-            
-            const landingPage = document.getElementById('landingPage');
-            const lockScreen = document.getElementById('lockScreen');
-            
-            if (isPWA) {
-                // Hide landing page in PWA, show lock screen
-                landingPage.classList.add('hidden');
-                lockScreen.classList.remove('hidden');
-            } else {
-                // Show landing page on website
-                landingPage.classList.remove('hidden');
-                lockScreen.classList.add('hidden');
-            }
+        // Enter key handlers
+        document
+          .getElementById("loginPassword")
+          .addEventListener("keypress", (e) => {
+            if (e.key === "Enter") login();
+          });
+        document
+          .getElementById("signupConfirm")
+          .addEventListener("keypress", (e) => {
+            if (e.key === "Enter") signup();
+          });
+        document
+          .getElementById("shareUsername")
+          .addEventListener("keypress", (e) => {
+            if (e.key === "Enter") shareDrop();
+          });
+
+        // Keyboard shortcuts
+        document.addEventListener("keydown", (e) => {
+          if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+            e.preventDefault();
+            document.getElementById("searchInput").focus();
+          }
+          if (e.key === "Escape") {
+            closeDetail();
+          }
+        });
+      }
+
+      function checkSession() {
+        const savedUser = sessionStorage.getItem("currentUser");
+        if (savedUser) {
+          currentUser = JSON.parse(savedUser);
+          showMainApp();
+        }
+      }
+
+      function switchTab(tab) {
+        document
+          .querySelectorAll(".auth-tab")
+          .forEach((t) => t.classList.remove("active"));
+        document
+          .querySelectorAll(".auth-form")
+          .forEach((f) => f.classList.remove("active"));
+
+        if (tab === "login") {
+          document.querySelectorAll(".auth-tab")[0].classList.add("active");
+          document.getElementById("loginForm").classList.add("active");
+        } else {
+          document.querySelectorAll(".auth-tab")[1].classList.add("active");
+          document.getElementById("signupForm").classList.add("active");
+        }
+      }
+
+      async function signup() {
+        const nickname = document.getElementById("signupNickname").value.trim();
+        const password = document.getElementById("signupPassword").value;
+        const confirm = document.getElementById("signupConfirm").value;
+
+        if (!nickname || !password) {
+          showToast("PLEASE FILL ALL FIELDS", true);
+          return;
         }
 
-        function goToApp() {
-            // Hide landing page and show lock screen
-            const landingPage = document.getElementById('landingPage');
-            const lockScreen = document.getElementById('lockScreen');
-            
-            landingPage.classList.add('hidden');
-            lockScreen.classList.remove('hidden');
-            
-            // Ensure lock screen is visible
-            lockScreen.style.display = 'flex';
-            
-            console.log('Navigating to app - Landing hidden:', landingPage.classList.contains('hidden'), 'Lock screen visible:', !lockScreen.classList.contains('hidden'));
+        if (password.length < 4) {
+          showToast("PASSWORD TOO SHORT (MIN 4 CHARS)", true);
+          return;
         }
 
-        function registerServiceWorker() {
-            if ('serviceWorker' in navigator) {
-                // First, unregister old service workers and clear old caches
-                navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                    for(let registration of registrations) {
-                        registration.unregister();
-                    }
-                });
-                
-                caches.keys().then(function(names) {
-                    for (let name of names) {
-                        if (name !== 'stash-v2-theme') {
-                            caches.delete(name);
-                        }
-                    }
-                });
-                
-                // Register new service worker after a short delay
-                setTimeout(() => {
-                    navigator.serviceWorker.register('sw.js')
-                        .then(reg => {
-                            console.log('Service Worker v2 registered');
-                            reg.update();
-                        })
-                        .catch(err => console.log('Service Worker registration failed:', err));
-                }, 500);
-            }
+        if (password !== confirm) {
+          showToast("PASSWORDS DO NOT MATCH", true);
+          return;
         }
 
-        function setupEventListeners() {
-            document.getElementById('saveBtn').addEventListener('click', saveDrop);
-            document.getElementById('searchInput').addEventListener('input', () => {
-                filterDrops();
-                toggleClearButton();
-            });
-            document.getElementById('textInput').addEventListener('input', updateCharCount);
-            document.getElementById('modalTextInput').addEventListener('input', updateModalCharCount);
-            document.getElementById('copyBtn').addEventListener('click', copyDrop);
-            document.getElementById('editBtn').addEventListener('click', editDrop);
-            document.getElementById('deleteBtn').addEventListener('click', confirmDelete);
-            document.getElementById('closeBtn').addEventListener('click', closeDetail);
-            document.getElementById('shareBtn').addEventListener('click', shareDrop);
-            document.getElementById('detailPanel').addEventListener('click', e => {
-                if (e.target.id === 'detailPanel') closeDetail();
-            });
-            document.getElementById('categoryModal').addEventListener('click', e => {
-                if (e.target.id === 'categoryModal') closeCategoryModal();
-            });
+        // Check if nickname exists
+        const { data: existing } = await sbClient
+          .from(USERS_TABLE)
+          .select("nickname")
+          .eq("nickname", nickname)
+          .single();
 
-            // Enter key handlers
-            document.getElementById('loginPassword').addEventListener('keypress', e => {
-                if (e.key === 'Enter') login();
-            });
-            document.getElementById('signupConfirm').addEventListener('keypress', e => {
-                if (e.key === 'Enter') signup();
-            });
-            document.getElementById('shareUsername').addEventListener('keypress', e => {
-                if (e.key === 'Enter') shareDrop();
-            });
-
-            // Keyboard shortcuts
-            document.addEventListener('keydown', e => {
-                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                    e.preventDefault();
-                    document.getElementById('searchInput').focus();
-                }
-                if (e.key === 'Escape') {
-                    closeDetail();
-                    closeCategoryModal();
-                }
-            });
+        if (existing) {
+          showToast("NICKNAME ALREADY TAKEN", true);
+          return;
         }
 
-        function checkSession() {
-            // Check localStorage first (remember me), then sessionStorage
-            const savedUser = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
-            if (savedUser) {
-                currentUser = JSON.parse(savedUser);
-                // Hide landing page if user is logged in
-                document.getElementById('landingPage').classList.add('hidden');
-                document.getElementById('lockScreen').classList.add('hidden');
-                showMainApp();
-            }
+        // Create account
+        const { error } = await sbClient
+          .from(USERS_TABLE)
+          .insert([{ nickname, password }]);
+
+        if (error) {
+          console.error("Signup error:", error);
+          showToast("SIGNUP FAILED", true);
+          return;
         }
 
-        function switchTab(tab) {
-            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
-            
-            if (tab === 'login') {
-                document.querySelectorAll('.auth-tab')[0].classList.add('active');
-                document.getElementById('loginForm').classList.add('active');
-            } else {
-                document.querySelectorAll('.auth-tab')[1].classList.add('active');
-                document.getElementById('signupForm').classList.add('active');
-            }
+        showToast("ACCOUNT CREATED! PLEASE LOGIN");
+        document.getElementById("signupNickname").value = "";
+        document.getElementById("signupPassword").value = "";
+        document.getElementById("signupConfirm").value = "";
+        switchTab("login");
+      }
+
+      async function login() {
+        const nickname = document.getElementById("loginNickname").value.trim();
+        const password = document.getElementById("loginPassword").value;
+
+        if (!nickname || !password) {
+          showToast("PLEASE ENTER CREDENTIALS", true);
+          return;
         }
 
-        async function signup() {
-            try {
-                const nickname = document.getElementById('signupNickname').value.trim();
-                const password = document.getElementById('signupPassword').value;
-                const confirm = document.getElementById('signupConfirm').value;
+        const { data: user, error } = await sbClient
+          .from(USERS_TABLE)
+          .select("*")
+          .eq("nickname", nickname)
+          .eq("password", password)
+          .single();
 
-                if (!nickname || !password) {
-                    showToast('PLEASE FILL ALL FIELDS', true);
-                    return;
-                }
-
-                if (password.length < 4) {
-                    showToast('PASSWORD TOO SHORT (MIN 4 CHARS)', true);
-                    return;
-                }
-
-                if (password !== confirm) {
-                    showToast('PASSWORDS DO NOT MATCH', true);
-                    return;
-                }
-
-                // Check if nickname exists
-                const { data: existing } = await sbClient
-                    .from(USERS_TABLE)
-                    .select('nickname')
-                    .eq('nickname', nickname)
-                    .single();
-
-                if (existing) {
-                    showToast('USERNAME ALREADY TAKEN', true);
-                    return;
-                }
-
-                // Create account with plain password
-                const { error } = await sbClient
-                    .from(USERS_TABLE)
-                    .insert([{ nickname, password }]);
-
-                if (error) {
-                    console.error('Signup error:', error);
-                    showToast('SIGNUP FAILED', true);
-                    return;
-                }
-
-                showToast('ACCOUNT CREATED! PLEASE LOGIN');
-                document.getElementById('signupNickname').value = '';
-                document.getElementById('signupPassword').value = '';
-                document.getElementById('signupConfirm').value = '';
-                switchTab('login');
-            } catch (err) {
-                console.error('Signup error:', err);
-                showToast('SIGNUP FAILED. TRY AGAIN', true);
-            }
-        }
-                const { error } = await sbClient
-                    .from(USERS_TABLE)
-                    .insert([{ nickname, password: hashedPassword }]);
-
-                if (error) {
-                    console.error('Signup error:', error);
-                    showToast('SIGNUP FAILED', true);
-                    return;
-                }
-
-                showToast('ACCOUNT CREATED! PLEASE LOGIN');
-                document.getElementById('signupNickname').value = '';
-                document.getElementById('signupPassword').value = '';
-                document.getElementById('signupConfirm').value = '';
-                switchTab('login');
-            } catch (err) {
-                console.error('Signup error:', err);
-                showToast('SIGNUP FAILED. TRY AGAIN', true);
-            }
+        if (error || !user) {
+          showToast("INVALID CREDENTIALS", true);
+          return;
         }
 
-        async function login() {
-            try {
-                const nickname = document.getElementById('loginNickname').value.trim();
-                const password = document.getElementById('loginPassword').value;
-                const rememberMe = document.getElementById('rememberMe').checked;
+        currentUser = user;
+        sessionStorage.setItem("currentUser", JSON.stringify(user));
+        startDecryption();
+      }
 
-                if (!nickname || !password) {
-                    showToast('PLEASE ENTER CREDENTIALS', true);
-                    return;
-                }
+      function logout() {
+        currentUser = null;
+        sessionStorage.removeItem("currentUser");
+        document.getElementById("mainApp").classList.remove("visible");
+        document.getElementById("lockScreen").classList.remove("hidden");
+        document.getElementById("loginNickname").value = "";
+        document.getElementById("loginPassword").value = "";
+        drops = [];
+      }
 
-                // Get user by nickname and password
-                const { data: user, error } = await sbClient
-                    .from(USERS_TABLE)
-                    .select('*')
-                    .eq('nickname', nickname)
-                    .eq('password', password)
-                    .single();
-
-                console.log('Login attempt:', { nickname, hasPassword: !!password, user, error });
-
-                if (error || !user) {
-                    showToast('INVALID CREDENTIALS', true);
-                    console.error('Login failed:', error);
-                    return;
-                }
-
-                currentUser = user;
-                
-                // Save to localStorage if "Remember Me" is checked, otherwise sessionStorage
-                if (rememberMe) {
-                    localStorage.setItem('currentUser', JSON.stringify(user));
-                    localStorage.setItem('rememberMe', 'true');
-                } else {
-                    sessionStorage.setItem('currentUser', JSON.stringify(user));
-                }
-                
-                startDecryption();
-            } catch (err) {
-                console.error('Login error:', err);
-                showToast('LOGIN FAILED. TRY AGAIN', true);
-            }
-        }
-
-        function logout() {
-            currentUser = null;
-            // Clear both localStorage and sessionStorage
-            localStorage.removeItem('currentUser');
-            localStorage.removeItem('rememberMe');
-            sessionStorage.removeItem('currentUser');
-            document.getElementById('mainApp').classList.remove('visible');
-            document.getElementById('plusBtn').style.display = 'none';
-            document.getElementById('lockScreen').classList.remove('hidden');
-            document.getElementById('loginNickname').value = '';
-            document.getElementById('loginPassword').value = '';
-            document.getElementById('rememberMe').checked = false;
-            drops = [];
-        }
-
-        function startDecryption() {
-            document.getElementById('decryptionScreen').classList.add('active');
-            const progressFill = document.getElementById('progressFill');
-            const status = document.getElementById('decryptStatus');
-            const messages = [
-                'INITIALIZING SECURE CONNECTION...',
-                'VERIFYING CREDENTIALS...',
-                'DECRYPTING STASH...',
-                'LOADING ENCRYPTED FILES...',
-                'ESTABLISHING SECURE TUNNEL...',
-                'ACCESSING YOUR STASH...',
-                'AUTHENTICATION COMPLETE'
-            ];
-            let progress = 0, messageIndex = 0;
-            const interval = setInterval(() => {
-                progress += 2;
-                progressFill.style.width = progress + '%';
-                if (progress % 15 === 0 && messageIndex < messages.length) {
-                    status.textContent = messages[messageIndex++];
-                }
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        document.getElementById('decryptionScreen').classList.remove('active');
-                        document.getElementById('lockScreen').classList.add('hidden');
-                        document.getElementById('mainApp').classList.add('visible');
-                        progressFill.style.width = '0%';
-                        status.textContent = '';
-                        showMainApp();
-                    }, 500);
-                }
-            }, 30);
-        }
-
-        function showMainApp() {
-            document.getElementById('lockScreen').classList.add('hidden');
-            document.getElementById('mainApp').classList.add('visible');
-            document.getElementById('plusBtn').style.display = 'flex';
-            document.getElementById('userDisplay').textContent = `USER: ${currentUser.nickname.toUpperCase()}`;
-            initializeCategoryFilters();
-            updateNotificationBadge();
-            loadDrops();
-            subscribeToRealtime();
-            
-            // Request notification permission
-            if ('Notification' in window && Notification.permission === 'default') {
-                Notification.requestPermission().then(permission => {
-                    if (permission === 'granted') {
-                        showToast('NOTIFICATIONS ENABLED');
-                    }
-                });
-            }
-            
-            // Show install prompt if not installed and user hasn't dismissed it
-            checkAndShowInstallPrompt();
-        }
-
-        function checkAndShowInstallPrompt() {
-            // Check if running as PWA (standalone mode)
-            const isInstalled = window.matchMedia('(display-mode: standalone)').matches || 
-                               window.navigator.standalone === true;
-            
-            if (isInstalled) {
-                return; // Already installed, don't show prompt
-            }
-            
-            // Check if user has dismissed the prompt
-            const dismissedInstall = localStorage.getItem('dismissedInstallPrompt');
-            
-            if (dismissedInstall === 'true') {
-                return; // User dismissed it, don't show again
-            }
-            
-            // Show install prompt after a short delay
+      function startDecryption() {
+        document.getElementById("decryptionScreen").classList.add("active");
+        const progressFill = document.getElementById("progressFill");
+        const status = document.getElementById("decryptStatus");
+        const messages = [
+          "INITIALIZING SECURE CONNECTION...",
+          "VERIFYING CREDENTIALS...",
+          "DECRYPTING STASH...",
+          "LOADING ENCRYPTED FILES...",
+          "ESTABLISHING SECURE TUNNEL...",
+          "ACCESSING YOUR STASH...",
+          "AUTHENTICATION COMPLETE",
+        ];
+        let progress = 0,
+          messageIndex = 0;
+        const interval = setInterval(() => {
+          progress += 2;
+          progressFill.style.width = progress + "%";
+          if (progress % 15 === 0 && messageIndex < messages.length) {
+            status.textContent = messages[messageIndex++];
+          }
+          if (progress >= 100) {
+            clearInterval(interval);
             setTimeout(() => {
-                showPersistentInstallPrompt();
-            }, 2000); // 2 second delay after login
+              document
+                .getElementById("decryptionScreen")
+                .classList.remove("active");
+              document.getElementById("lockScreen").classList.add("hidden");
+              document.getElementById("mainApp").classList.add("visible");
+              progressFill.style.width = "0%";
+              status.textContent = "";
+              showMainApp();
+            }, 500);
+          }
+        }, 30);
+      }
+
+      function showMainApp() {
+        document.getElementById("lockScreen").classList.add("hidden");
+        document.getElementById("mainApp").classList.add("visible");
+        document.getElementById("userDisplay").textContent =
+          `USER: ${currentUser.nickname.toUpperCase()}`;
+        loadDrops();
+        subscribeToRealtime();
+      }
+
+      async function loadDrops() {
+        // Load user's own drops
+        const { data: ownDrops, error: ownError } = await sbClient
+          .from(TABLE_NAME)
+          .select("*")
+          .eq("user_id", currentUser.id)
+          .order("created_at", { ascending: false });
+
+        if (ownError) {
+          console.error("Error loading drops:", ownError);
+          showToast("ERROR LOADING DATA", true);
+          return;
         }
 
-        function showPersistentInstallPrompt() {
-            // Create persistent banner
-            const banner = document.createElement('div');
-            banner.id = 'installPromptBanner';
-            banner.style.cssText = `
-                position: fixed;
-                top: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                background: linear-gradient(135deg, var(--bg-elevated), var(--bg-card));
-                border: 2px solid var(--primary);
-                border-radius: 12px;
-                padding: 20px 25px;
-                max-width: 500px;
-                width: 90%;
-                z-index: 9999;
-                box-shadow: 0 0 30px rgba(201, 184, 122, 0.4);
-                animation: slideDown 0.5s ease;
-                font-family: 'Courier Prime', monospace;
-            `;
-            
-            banner.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <div style="font-size: 2rem;">📱</div>
-                    <div style="flex: 1;">
-                        <div style="color: var(--primary); font-weight: 700; margin-bottom: 5px; font-size: 0.95rem;">INSTALL STASH APP</div>
-                        <div style="color: var(--text-secondary); font-size: 0.85rem;">Get the full app experience with offline access!</div>
-                    </div>
-                    <button onclick="dismissInstallPrompt()" style="background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; padding: 5px;">×</button>
-                </div>
-                <div style="display: flex; gap: 10px; margin-top: 15px;">
-                    <button class="btn" onclick="triggerInstall()" style="flex: 1; padding: 10px 20px; font-size: 0.85rem;">INSTALL NOW</button>
-                    <button class="btn btn-secondary" onclick="dismissInstallPrompt()" style="flex: 1; padding: 10px 20px; font-size: 0.85rem;">MAYBE LATER</button>
-                </div>
-            `;
-            
-            document.body.appendChild(banner);
-        }
-
-        function dismissInstallPrompt() {
-            const banner = document.getElementById('installPromptBanner');
-            if (banner) {
-                banner.style.animation = 'slideUp 0.3s ease';
-                setTimeout(() => banner.remove(), 300);
-            }
-            // Don't save dismissal to localStorage - we want it to show again next login
-        }
-
-        function triggerInstall() {
-            const banner = document.getElementById('installPromptBanner');
-            if (banner) {
-                banner.remove();
-            }
-            
-            // Try to trigger native install prompt
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        showToast('APP INSTALLING...');
-                        // Mark as installed so prompt doesn't show again
-                        localStorage.setItem('dismissedInstallPrompt', 'true');
-                    }
-                    deferredPrompt = null;
-                });
-            } else {
-                // Show instructions if native prompt not available
-                showInstallInstructions();
-            }
-        }
-
-        async function loadDrops() {
-            // Load user's own drops
-            const { data: ownDrops, error: ownError } = await sbClient
-                .from(TABLE_NAME)
-                .select('*')
-                .eq('user_id', currentUser.id)
-                .order('created_at', { ascending: false });
-            
-            if (ownError) {
-                console.error('Error loading drops:', ownError);
-                showToast('ERROR LOADING DATA', true);
-                return;
-            }
-
-            // Load shared drops
-            const { data: sharedDrops, error: sharedError } = await sbClient
-                .from(SHARES_TABLE)
-                .select(`
+        // Load shared drops
+        const { data: sharedDrops, error: sharedError } = await sbClient
+          .from(SHARES_TABLE)
+          .select(
+            `
                     drop_id,
                     drops:drop_id (
                         id,
@@ -2288,550 +1639,391 @@
                         user_id,
                         users:user_id (nickname)
                     )
-                `)
-                .eq('shared_with_user_id', currentUser.id);
+                `,
+          )
+          .eq("shared_with_user_id", currentUser.id);
 
-            let allDrops = ownDrops || [];
-            
-            if (!sharedError && sharedDrops) {
-                const formattedShared = sharedDrops
-                    .filter(s => s.drops)
-                    .map(s => ({
-                        ...s.drops,
-                        shared: true,
-                        shared_by: s.drops.users?.nickname || 'Unknown'
-                    }));
-                allDrops = [...allDrops, ...formattedShared];
-            }
+        let allDrops = ownDrops || [];
 
-            drops = allDrops.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-            renderDrops();
+        if (!sharedError && sharedDrops) {
+          const formattedShared = sharedDrops
+            .filter((s) => s.drops)
+            .map((s) => ({
+              ...s.drops,
+              shared: true,
+              shared_by: s.drops.users?.nickname || "Unknown",
+            }));
+          allDrops = [...allDrops, ...formattedShared];
         }
 
-        async function saveDrop() {
-            const text = document.getElementById('textInput').value.trim();
-            const label = document.getElementById('labelInput').value.trim();
-            
-            if (!text) {
-                showToast('NO DATA ENTERED', true);
-                return;
-            }
-            
-            const { data, error } = await sbClient
-                .from(TABLE_NAME)
-                .insert([{ text, label: label || null, user_id: currentUser.id }])
-                .select();
-            
-            if (error) {
-                console.error('Save error:', error);
-                showToast('SAVE FAILED', true);
-                return;
-            }
-            
-            document.getElementById('textInput').value = '';
-            document.getElementById('labelInput').value = '';
-            showToast('DATA SAVED');
-            loadDrops();
+        drops = allDrops.sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at),
+        );
+        renderDrops();
+      }
+
+      async function saveDrop() {
+        const text = document.getElementById("textInput").value.trim();
+        const label = document.getElementById("labelInput").value.trim();
+
+        if (!text) {
+          showToast("NO DATA ENTERED", true);
+          return;
         }
 
-        function renderDrops(filteredDrops) {
-            const list = document.getElementById('dropsList');
-            const dropsToRender = filteredDrops || drops;
-            
-            // Update count
-            const countText = dropsToRender.length === 1 ? '1 STASH' : `${dropsToRender.length} STASHES`;
-            document.getElementById('stashCount').textContent = countText;
-            
-            // Get unopened stashes (only if user is logged in)
-            let unopened = [];
-            if (currentUser) {
-                const unopenedKey = `unopened_${currentUser.id}`;
-                unopened = JSON.parse(localStorage.getItem(unopenedKey) || '[]');
-            }
-            
-            if (dropsToRender.length === 0) {
-                let emptyMessage = 'YOUR STASH IS EMPTY';
-                if (currentFilter === 'mine') {
-                    emptyMessage = 'NO PERSONAL STASHES YET';
-                } else if (currentFilter === 'shared') {
-                    emptyMessage = 'NO SHARED STASHES YET';
-                }
-                list.innerHTML = `<div style="text-align: center; color: var(--text-secondary); padding: 40px; font-size: 1.1rem; font-family: 'Syne', sans-serif;">${emptyMessage}<br><span style="font-size: 0.85rem; color: var(--text-muted); margin-top: 10px; display: block;">Create your first stash above</span></div>`;
-                return;
-            }
-            list.innerHTML = dropsToRender.map(drop => {
-                const isUnopened = unopened.includes(drop.id);
-                const category = CATEGORIES.find(c => c.id === drop.category);
-                const categoryTag = category ? `<span class="category-tag" style="background: ${category.color}; color: white;">${category.name}</span>` : '';
-                
-                return `
-                <div class="drop-item" onclick="openDetail('${drop.id}')" style="${isUnopened ? 'border-color: var(--danger); box-shadow: 0 0 15px rgba(212, 93, 93, 0.3);' : ''}">
-                    ${drop.shared ? `<div style="color: var(--accent); font-size: 0.8rem; margin-bottom: 5px; text-transform: uppercase; font-family: 'Syne', sans-serif; font-weight: 600; display: flex; align-items: center; gap: 6px; justify-content: space-between;">
-                        <div style="display: flex; align-items: center; gap: 6px;">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
-                                <path d="M16 5L19 8M19 8L16 11M19 8H9M8 19L5 16M5 16L8 13M5 16H15" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            <span>SHARED BY ${drop.shared_by}</span>
-                        </div>
-                        ${isUnopened ? '<span style="background: var(--danger); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 700;">NEW</span>' : ''}
-                    </div>` : ''}
-                    ${categoryTag}
-                    ${drop.label ? `<div class="drop-label">${escapeHtml(drop.label)}</div>` : ''}
+        const { data, error } = await sbClient
+          .from(TABLE_NAME)
+          .insert([{ text, label: label || null, user_id: currentUser.id }])
+          .select();
+
+        if (error) {
+          console.error("Save error:", error);
+          showToast("SAVE FAILED", true);
+          return;
+        }
+
+        document.getElementById("textInput").value = "";
+        document.getElementById("labelInput").value = "";
+        showToast("DATA SAVED");
+        loadDrops();
+      }
+
+      function renderDrops(filteredDrops) {
+        const list = document.getElementById("dropsList");
+        const dropsToRender = filteredDrops || drops;
+
+        // Update count
+        const countText =
+          dropsToRender.length === 1
+            ? "1 STASH"
+            : `${dropsToRender.length} STASHES`;
+        document.getElementById("stashCount").textContent = countText;
+
+        if (dropsToRender.length === 0) {
+          let emptyMessage = "YOUR STASH IS EMPTY";
+          if (currentFilter === "mine") {
+            emptyMessage = "NO PERSONAL STASHES YET";
+          } else if (currentFilter === "shared") {
+            emptyMessage = "NO SHARED STASHES YET";
+          }
+          list.innerHTML = `<div style="text-align: center; color: var(--text-secondary); padding: 40px; font-size: 1.1rem; font-family: 'Syne', sans-serif;">${emptyMessage}<br><span style="font-size: 0.85rem; color: var(--text-muted); margin-top: 10px; display: block;">Create your first stash above</span></div>`;
+          return;
+        }
+        list.innerHTML = dropsToRender
+          .map(
+            (drop) => `
+                <div class="drop-item" onclick="openDetail('${drop.id}')">
+                    ${
+                      drop.shared
+                        ? `<div style="color: var(--accent); font-size: 0.8rem; margin-bottom: 5px; text-transform: uppercase; font-family: 'Syne', sans-serif; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+                            <path d="M16 5L19 8M19 8L16 11M19 8H9M8 19L5 16M5 16L8 13M5 16H15" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>SHARED BY ${drop.shared_by}</span>
+                    </div>`
+                        : ""
+                    }
+                    ${drop.label ? `<div class="drop-label">${escapeHtml(drop.label)}</div>` : ""}
                     <div class="drop-text">${escapeHtml(drop.text)}</div>
                     <div class="drop-date">${formatDate(drop.created_at)}</div>
                 </div>
-            `;
-            }).join('');
+            `,
+          )
+          .join("");
+      }
+
+      function filterDrops() {
+        const searchTerm = document
+          .getElementById("searchInput")
+          .value.toLowerCase()
+          .trim();
+
+        let filtered = drops;
+
+        // Apply type filter
+        if (currentFilter === "mine") {
+          filtered = drops.filter((drop) => !drop.shared);
+        } else if (currentFilter === "shared") {
+          filtered = drops.filter((drop) => drop.shared);
         }
 
-        function filterDrops() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-            
-            let filtered = drops;
-            
-            // Apply type filter
-            if (currentFilter === 'mine') {
-                filtered = drops.filter(drop => !drop.shared);
-            } else if (currentFilter === 'shared') {
-                filtered = drops.filter(drop => drop.shared);
-            }
-            
-            // Apply category filter
-            if (currentCategory !== 'all') {
-                filtered = filtered.filter(drop => drop.category === currentCategory);
-            }
-            
-            // Apply search filter
-            if (searchTerm) {
-                filtered = filtered.filter(drop =>
-                    drop.text.toLowerCase().includes(searchTerm) ||
-                    (drop.label && drop.label.toLowerCase().includes(searchTerm))
-                );
-            }
-            
-            renderDrops(filtered);
+        // Apply search filter
+        if (searchTerm) {
+          filtered = filtered.filter(
+            (drop) =>
+              drop.text.toLowerCase().includes(searchTerm) ||
+              (drop.label && drop.label.toLowerCase().includes(searchTerm)),
+          );
         }
 
-        function filterByType(type) {
-            currentFilter = type;
-            
-            // Remove pulse animation when user views shared stashes
-            if (type === 'shared') {
-                removeNotificationPulse();
-            }
-            
-            // Update active tab
-            document.querySelectorAll('.filter-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelector(`[data-filter="${type}"]`).classList.add('active');
-            
-            filterDrops();
+        renderDrops(filtered);
+      }
+
+      function filterByType(type) {
+        currentFilter = type;
+
+        // Update active tab
+        document.querySelectorAll(".filter-tab").forEach((tab) => {
+          tab.classList.remove("active");
+        });
+        document
+          .querySelector(`[data-filter="${type}"]`)
+          .classList.add("active");
+
+        filterDrops();
+      }
+
+      function clearSearch() {
+        document.getElementById("searchInput").value = "";
+        toggleClearButton();
+        filterDrops();
+      }
+
+      function toggleClearButton() {
+        const searchInput = document.getElementById("searchInput");
+        const clearBtn = document.getElementById("clearSearch");
+        clearBtn.style.display = searchInput.value ? "block" : "none";
+      }
+
+      function toggleShareSection() {
+        const content = document.getElementById("shareContent");
+        const icon = document.getElementById("shareToggleIcon");
+
+        if (content.style.display === "none") {
+          content.style.display = "block";
+          icon.textContent = "▼";
+        } else {
+          content.style.display = "none";
+          icon.textContent = "▶";
+        }
+      }
+
+      function confirmDelete() {
+        if (!currentDrop) return;
+
+        const confirmMsg = `Are you sure you want to delete this stash?\n\n"${currentDrop.text.substring(0, 50)}${currentDrop.text.length > 50 ? "..." : ""}"`;
+
+        if (confirm(confirmMsg)) {
+          deleteDrop();
+        }
+      }
+
+      function openDetail(id) {
+        currentDrop = drops.find((d) => d.id === id);
+        if (!currentDrop) return;
+        document.getElementById("detailLabel").textContent =
+          currentDrop.label || "";
+        document.getElementById("detailLabel").style.display = currentDrop.label
+          ? "block"
+          : "none";
+        document.getElementById("detailText").textContent = currentDrop.text;
+        document.getElementById("detailDate").textContent = formatDate(
+          currentDrop.created_at,
+        );
+
+        // Show character and word count
+        const stats = getTextStats(currentDrop.text);
+        document.getElementById("detailStats").textContent =
+          `${stats.charCount} CHARS | ${stats.wordCount} WORDS`;
+
+        document.getElementById("shareUsername").value = "";
+
+        // Reset share section to expanded state
+        document.getElementById("shareContent").style.display = "block";
+        document.getElementById("shareToggleIcon").textContent = "▼";
+
+        // Hide share section if this is a shared drop (not owned by user)
+        const shareSection = document.querySelector(".share-section");
+        if (currentDrop.shared) {
+          shareSection.style.display = "none";
+        } else {
+          shareSection.style.display = "block";
+          loadShareHistory();
         }
 
-        function filterByCategory(categoryId) {
-            currentCategory = categoryId;
-            
-            // Update active category button
-            document.querySelectorAll('.category-filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-                btn.style.borderColor = 'var(--border)';
-                btn.style.color = 'var(--text-secondary)';
-            });
-            
-            const activeBtn = document.querySelector(`[data-category="${categoryId}"]`);
-            if (activeBtn) {
-                activeBtn.classList.add('active');
-                if (categoryId === 'all') {
-                    activeBtn.style.borderColor = 'var(--primary)';
-                    activeBtn.style.color = 'var(--primary)';
-                } else {
-                    const category = CATEGORIES.find(c => c.id === categoryId);
-                    if (category) {
-                        activeBtn.style.borderColor = category.color;
-                        activeBtn.style.backgroundColor = category.color;
-                        activeBtn.style.color = 'white';
-                    }
-                }
-            }
-            
-            filterDrops();
-        }
+        document.getElementById("detailPanel").classList.add("active");
+      }
 
-        function initializeCategoryFilters() {
-            const filterContainer = document.getElementById('categoryFilter');
-            
-            // Add category buttons
-            CATEGORIES.forEach(category => {
-                const btn = document.createElement('button');
-                btn.className = 'category-filter-btn';
-                btn.setAttribute('data-category', category.id);
-                btn.setAttribute('onclick', `filterByCategory('${category.id}')`);
-                btn.textContent = category.name;
-                btn.style.borderColor = category.color;
-                filterContainer.appendChild(btn);
-            });
-        }
+      async function loadShareHistory() {
+        if (!currentDrop || currentDrop.shared) return;
 
-        function openCategoryModal() {
-            const modal = document.getElementById('categoryModal');
-            const grid = document.getElementById('categoryGrid');
-            
-            // Populate category grid
-            grid.innerHTML = CATEGORIES.map(category => `
-                <div class="category-option" data-category="${category.id}" onclick="selectCategory('${category.id}')" style="border-color: ${category.color};">
-                    <div style="color: ${category.color}; font-size: 1.5rem; margin-bottom: 8px;">●</div>
-                    <div>${category.name}</div>
-                </div>
-            `).join('');
-            
-            modal.classList.add('active');
-            document.getElementById('modalTextInput').focus();
-        }
-
-        function closeCategoryModal() {
-            const modal = document.getElementById('categoryModal');
-            modal.classList.remove('active');
-            
-            // Clear inputs
-            document.getElementById('modalTextInput').value = '';
-            document.getElementById('modalLabelInput').value = '';
-            
-            // Deselect all categories
-            document.querySelectorAll('.category-option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
-        }
-
-        let selectedCategory = null;
-
-        function selectCategory(categoryId) {
-            selectedCategory = categoryId;
-            
-            // Update visual selection
-            document.querySelectorAll('.category-option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
-            document.querySelector(`[data-category="${categoryId}"]`).classList.add('selected');
-        }
-
-        async function saveDropFromModal() {
-            const text = document.getElementById('modalTextInput').value.trim();
-            const label = document.getElementById('modalLabelInput').value.trim();
-            
-            if (!text) {
-                showToast('NO DATA ENTERED', true);
-                return;
-            }
-            
-            if (!selectedCategory) {
-                showToast('PLEASE SELECT A CATEGORY', true);
-                return;
-            }
-            
-            const { data, error } = await sbClient
-                .from(TABLE_NAME)
-                .insert([{ 
-                    text, 
-                    label: label || null, 
-                    category: selectedCategory,
-                    user_id: currentUser.id 
-                }])
-                .select();
-            
-            if (error) {
-                console.error('Save error:', error);
-                showToast('SAVE FAILED', true);
-                return;
-            }
-            
-            selectedCategory = null;
-            closeCategoryModal();
-            showToast('DATA SAVED');
-            loadDrops();
-        }
-
-        function updateModalCharCount() {
-            const text = document.getElementById('modalTextInput').value;
-            const charCount = text.length;
-            const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
-            document.getElementById('modalCharCount').textContent = `${charCount} CHARACTERS | ${wordCount} WORDS`;
-        }
-
-        function clearSearch() {
-            document.getElementById('searchInput').value = '';
-            toggleClearButton();
-            filterDrops();
-        }
-
-        function toggleClearButton() {
-            const searchInput = document.getElementById('searchInput');
-            const clearBtn = document.getElementById('clearSearch');
-            clearBtn.style.display = searchInput.value ? 'block' : 'none';
-        }
-
-        function toggleShareSection() {
-            const content = document.getElementById('shareContent');
-            const icon = document.getElementById('shareToggleIcon');
-            
-            if (content.style.display === 'none') {
-                content.style.display = 'block';
-                icon.textContent = '▼';
-            } else {
-                content.style.display = 'none';
-                icon.textContent = '▶';
-            }
-        }
-
-        function confirmDelete() {
-            if (!currentDrop) return;
-            
-            const confirmMsg = `Are you sure you want to delete this stash?\n\n"${currentDrop.text.substring(0, 50)}${currentDrop.text.length > 50 ? '...' : ''}"`;
-            
-            if (confirm(confirmMsg)) {
-                deleteDrop();
-            }
-        }
-
-        function openDetail(id) {
-            currentDrop = drops.find(d => d.id === id);
-            if (!currentDrop) return;
-            
-            // Mark as opened if it's a shared stash
-            if (currentDrop.shared) {
-                markStashAsOpened(id);
-            }
-            
-            document.getElementById('detailLabel').textContent = currentDrop.label || '';
-            document.getElementById('detailLabel').style.display = currentDrop.label ? 'block' : 'none';
-            document.getElementById('detailText').textContent = currentDrop.text;
-            document.getElementById('detailDate').textContent = formatDate(currentDrop.created_at);
-            
-            // Show character and word count
-            const stats = getTextStats(currentDrop.text);
-            document.getElementById('detailStats').textContent = `${stats.charCount} CHARS | ${stats.wordCount} WORDS`;
-            
-            document.getElementById('shareUsername').value = '';
-            
-            // Reset share section to expanded state
-            document.getElementById('shareContent').style.display = 'block';
-            document.getElementById('shareToggleIcon').textContent = '▼';
-            
-            // Hide/show buttons based on ownership
-            const editBtn = document.getElementById('editBtn');
-            const deleteBtn = document.getElementById('deleteBtn');
-            const shareSection = document.querySelector('.share-section');
-            
-            if (currentDrop.shared) {
-                // Hide edit, delete, and share section for shared drops
-                editBtn.style.display = 'none';
-                deleteBtn.style.display = 'none';
-                shareSection.style.display = 'none';
-            } else {
-                // Show all buttons for own drops
-                editBtn.style.display = 'block';
-                deleteBtn.style.display = 'block';
-                shareSection.style.display = 'block';
-                loadShareHistory();
-            }
-            
-            document.getElementById('detailPanel').classList.add('active');
-        }
-
-        async function loadShareHistory() {
-            if (!currentDrop || currentDrop.shared) return;
-            
-            const { data: shares, error } = await sbClient
-                .from(SHARES_TABLE)
-                .select(`
+        const { data: shares, error } = await sbClient
+          .from(SHARES_TABLE)
+          .select(
+            `
                     id,
                     shared_with_user_id,
                     users:shared_with_user_id (nickname)
-                `)
-                .eq('drop_id', currentDrop.id);
-            
-            const sharedUsersList = document.getElementById('sharedUsersList');
-            
-            if (error || !shares || shares.length === 0) {
-                sharedUsersList.innerHTML = '<div style="color: var(--text-muted); font-size: 0.85rem; font-style: italic; font-family: \'Courier Prime\', monospace;">Not shared with anyone yet</div>';
-                return;
-            }
-            
-            sharedUsersList.innerHTML = shares.map(share => `
+                `,
+          )
+          .eq("drop_id", currentDrop.id);
+
+        const sharedUsersList = document.getElementById("sharedUsersList");
+
+        if (error || !shares || shares.length === 0) {
+          sharedUsersList.innerHTML =
+            "<div style=\"color: var(--text-muted); font-size: 0.85rem; font-style: italic; font-family: 'Courier Prime', monospace;\">Not shared with anyone yet</div>";
+          return;
+        }
+
+        sharedUsersList.innerHTML = shares
+          .map(
+            (share) => `
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(201, 184, 122, 0.05); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px;">
-                    <span style="color: var(--primary); font-size: 0.9rem; letter-spacing: 1px; font-family: 'Courier Prime', monospace;">${escapeHtml(share.users?.nickname || 'Unknown')}</span>
+                    <span style="color: var(--primary); font-size: 0.9rem; letter-spacing: 1px; font-family: 'Courier Prime', monospace;">${escapeHtml(share.users?.nickname || "Unknown")}</span>
                     <button class="btn btn-danger" onclick="revokeShare('${share.id}')" style="padding: 6px 12px; font-size: 0.75rem;">REVOKE</button>
                 </div>
-            `).join('');
+            `,
+          )
+          .join("");
+      }
+
+      async function revokeShare(shareId) {
+        const { error } = await sbClient
+          .from(SHARES_TABLE)
+          .delete()
+          .eq("id", shareId);
+
+        if (error) {
+          console.error("Revoke error:", error);
+          showToast("REVOKE FAILED", true);
+          return;
         }
 
-        async function revokeShare(shareId) {
-            const { error } = await sbClient
-                .from(SHARES_TABLE)
-                .delete()
-                .eq('id', shareId);
-            
-            if (error) {
-                console.error('Revoke error:', error);
-                showToast('REVOKE FAILED', true);
-                return;
-            }
-            
-            showToast('SHARE REVOKED');
-            loadShareHistory();
-            // Note: The recipient will see real-time removal via subscribeToRealtime DELETE event
+        showToast("SHARE REVOKED");
+        loadShareHistory();
+      }
+
+      async function shareDrop() {
+        const username = document.getElementById("shareUsername").value.trim();
+
+        if (!username) {
+          showToast("ENTER A USERNAME", true);
+          return;
         }
 
-        async function shareDrop() {
-            if (!currentDrop) {
-                showToast('NO STASH SELECTED', true);
-                return;
-            }
-            
-            const username = document.getElementById('shareUsername').value.trim();
-            
-            if (!username) {
-                showToast('ENTER A USERNAME', true);
-                return;
-            }
-
-            if (username.toLowerCase() === currentUser.nickname.toLowerCase()) {
-                showToast('CANNOT SHARE WITH YOURSELF', true);
-                return;
-            }
-
-            try {
-                // Find user by nickname
-                const { data: targetUser, error: userError } = await sbClient
-                    .from(USERS_TABLE)
-                    .select('id, nickname')
-                    .eq('nickname', username)
-                    .single();
-
-                if (userError || !targetUser) {
-                    console.error('User lookup error:', userError);
-                    showToast('USER NOT FOUND', true);
-                    return;
-                }
-
-                // Check if already shared
-                const { data: existing } = await sbClient
-                    .from(SHARES_TABLE)
-                    .select('id')
-                    .eq('drop_id', currentDrop.id)
-                    .eq('shared_with_user_id', targetUser.id)
-                    .single();
-
-                if (existing) {
-                    showToast('ALREADY SHARED WITH THIS USER', true);
-                    return;
-                }
-
-                // Share the drop
-                const { error: shareError } = await sbClient
-                    .from(SHARES_TABLE)
-                    .insert([{
-                        drop_id: currentDrop.id,
-                        owner_user_id: currentUser.id,
-                        shared_with_user_id: targetUser.id
-                    }]);
-
-                if (shareError) {
-                    console.error('Share error:', shareError);
-                    showToast('SHARE FAILED', true);
-                    return;
-                }
-
-                showToast(`SHARED WITH ${targetUser.nickname.toUpperCase()}`);
-                document.getElementById('shareUsername').value = '';
-                loadShareHistory();
-            } catch (err) {
-                console.error('Unexpected share error:', err);
-                showToast('SHARE FAILED - CHECK CONSOLE', true);
-            }
+        if (username.toLowerCase() === currentUser.nickname.toLowerCase()) {
+          showToast("CANNOT SHARE WITH YOURSELF", true);
+          return;
         }
 
-        function closeDetail() {
-            document.getElementById('detailPanel').classList.remove('active');
-            currentDrop = null;
+        // Find user by nickname
+        const { data: targetUser, error: userError } = await sbClient
+          .from(USERS_TABLE)
+          .select("id, nickname")
+          .eq("nickname", username)
+          .single();
+
+        if (userError || !targetUser) {
+          showToast("USER NOT FOUND", true);
+          return;
         }
 
-        async function copyDrop() {
-            if (!currentDrop) return;
-            try {
-                await navigator.clipboard.writeText(currentDrop.text);
-                showToast('COPIED TO CLIPBOARD');
-            } catch (err) {
-                console.error('Error:', err);
-                showToast('COPY FAILED', true);
-            }
+        // Check if already shared
+        const { data: existing } = await sbClient
+          .from(SHARES_TABLE)
+          .select("id")
+          .eq("drop_id", currentDrop.id)
+          .eq("shared_with_user_id", targetUser.id)
+          .single();
+
+        if (existing) {
+          showToast("ALREADY SHARED WITH THIS USER", true);
+          return;
         }
 
-        async function deleteDrop() {
-            if (!currentDrop) return;
-            
-            const dropId = currentDrop.id;
-            
-            // Close detail panel first so we can see the list
-            closeDetail();
-            
-            // Find the drop item in the DOM and add glitch animation
-            const dropItems = document.querySelectorAll('.drop-item');
-            let targetItem = null;
-            
-            dropItems.forEach(item => {
-                if (item.getAttribute('onclick')?.includes(dropId)) {
-                    targetItem = item;
-                }
-            });
-            
-            if (targetItem) {
-                targetItem.classList.add('glitch-delete');
-            }
-            
-            // Wait for animation to complete before deleting from database
-            await new Promise(resolve => setTimeout(resolve, 600));
-            
-            const { error } = await sbClient.from(TABLE_NAME).delete().eq('id', dropId);
-            if (error) {
-                console.error('Delete error:', error);
-                showToast('DELETE FAILED', true);
-                if (targetItem) {
-                    targetItem.classList.remove('glitch-delete');
-                }
-                return;
-            }
-            
-            showToast('DATA DELETED');
-            
-            // Remove from DOM immediately
-            if (targetItem) {
-                targetItem.remove();
-            }
-            
-            // Update drops array
-            drops = drops.filter(d => d.id !== dropId);
-            
-            // Update count
-            updateStashCount();
+        // Share the drop
+        const { error: shareError } = await sbClient.from(SHARES_TABLE).insert([
+          {
+            drop_id: currentDrop.id,
+            owner_user_id: currentUser.id,
+            shared_with_user_id: targetUser.id,
+          },
+        ]);
+
+        if (shareError) {
+          console.error("Share error:", shareError);
+          showToast("SHARE FAILED", true);
+          return;
         }
 
-        async function editDrop() {
-            if (!currentDrop) return;
-            
-            // Check if this is a shared drop (can't edit others' drops)
-            if (currentDrop.shared) {
-                showToast('CANNOT EDIT SHARED DROPS', true);
-                return;
-            }
-            
-            // Get current values
-            const currentText = currentDrop.text;
-            const currentLabel = currentDrop.label || '';
-            
-            // Replace detail view with edit form
-            const detailContent = document.querySelector('.detail-content');
-            detailContent.innerHTML = `
+        showToast(`SHARED WITH ${targetUser.nickname.toUpperCase()}`);
+        document.getElementById("shareUsername").value = "";
+        loadShareHistory();
+      }
+
+      function closeDetail() {
+        document.getElementById("detailPanel").classList.remove("active");
+        currentDrop = null;
+      }
+
+      async function copyDrop() {
+        if (!currentDrop) return;
+        try {
+          await navigator.clipboard.writeText(currentDrop.text);
+          showToast("COPIED TO CLIPBOARD");
+        } catch (err) {
+          console.error("Error:", err);
+          showToast("COPY FAILED", true);
+        }
+      }
+
+      async function deleteDrop() {
+        if (!currentDrop) return;
+
+        // Close detail panel first so we can see the list
+        closeDetail();
+
+        // Find the drop item in the DOM and add glitch animation
+        const dropItems = document.querySelectorAll(".drop-item");
+        let targetItem = null;
+
+        dropItems.forEach((item) => {
+          if (item.getAttribute("onclick")?.includes(currentDrop.id)) {
+            targetItem = item;
+          }
+        });
+
+        if (targetItem) {
+          targetItem.classList.add("glitch-delete");
+        }
+
+        // Wait for animation to complete before deleting from database
+        await new Promise((resolve) => setTimeout(resolve, 600));
+
+        const { error } = await sbClient
+          .from(TABLE_NAME)
+          .delete()
+          .eq("id", currentDrop.id);
+        if (error) {
+          console.error("Delete error:", error);
+          showToast("DELETE FAILED", true);
+          if (targetItem) {
+            targetItem.classList.remove("glitch-delete");
+          }
+          return;
+        }
+
+        showToast("DATA DELETED");
+        loadDrops(); // Reload the list after deletion
+      }
+
+      async function editDrop() {
+        if (!currentDrop) return;
+
+        // Check if this is a shared drop (can't edit others' drops)
+        if (currentDrop.shared) {
+          showToast("CANNOT EDIT SHARED DROPS", true);
+          return;
+        }
+
+        // Get current values
+        const currentText = currentDrop.text;
+        const currentLabel = currentDrop.label || "";
+
+        // Replace detail view with edit form
+        const detailContent = document.querySelector(".detail-content");
+        detailContent.innerHTML = `
                 <div style="color: var(--primary); font-size: 0.9rem; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; font-family: 'Syne', sans-serif; font-weight: 600;">EDIT STASH</div>
                 <input type="text" id="editLabel" class="share-input" placeholder="LABEL (OPTIONAL)" value="${escapeHtml(currentLabel)}" style="margin-bottom: 15px;">
                 <textarea id="editText" style="width: 100%; min-height: 200px; padding: 15px; font-family: 'Courier Prime', monospace; font-size: 1rem; background: var(--bg-dark); border: 2px solid var(--border); color: var(--text-primary); border-radius: 8px; resize: vertical; margin-bottom: 15px;">${escapeHtml(currentText)}</textarea>
@@ -2840,409 +2032,151 @@
                     <button class="btn btn-secondary" id="cancelEditBtn" style="flex: 1;">CANCEL</button>
                 </div>
             `;
-            
-            // Add event listeners for the new buttons
-            document.getElementById('saveEditBtn').addEventListener('click', async () => {
-                const newText = document.getElementById('editText').value.trim();
-                const newLabel = document.getElementById('editLabel').value.trim();
-                
-                if (!newText) {
-                    showToast('TEXT CANNOT BE EMPTY', true);
-                    return;
-                }
-                
-                const { error } = await sbClient
-                    .from(TABLE_NAME)
-                    .update({ text: newText, label: newLabel || null })
-                    .eq('id', currentDrop.id);
-                
-                if (error) {
-                    console.error('Update error:', error);
-                    showToast('UPDATE FAILED', true);
-                    return;
-                }
-                
-                showToast('STASH UPDATED');
-                closeDetail();
-                loadDrops();
-            });
-            
-            document.getElementById('cancelEditBtn').addEventListener('click', () => {
-                closeDetail();
-            });
-        }
 
-        function subscribeToRealtime() {
-            // Subscribe to own drops changes
-            sbClient.channel('drops-changes')
-                .on('postgres_changes', { 
-                    event: '*', 
-                    schema: 'public', 
-                    table: TABLE_NAME,
-                    filter: `user_id=eq.${currentUser.id}`
-                }, () => loadDrops())
-                .subscribe();
-            
-            // Subscribe to shared drops (when someone shares with you)
-            sbClient.channel('shared-drops-changes')
-                .on('postgres_changes', { 
-                    event: 'INSERT', 
-                    schema: 'public', 
-                    table: SHARES_TABLE,
-                    filter: `shared_with_user_id=eq.${currentUser.id}`
-                }, async (payload) => {
-                    console.log('New share received:', payload);
-                    
-                    // Get the drop details and owner info
-                    const { data: shareData } = await sbClient
-                        .from(SHARES_TABLE)
-                        .select(`
-                            drops:drop_id (label, text),
-                            owner:owner_user_id (nickname)
-                        `)
-                        .eq('id', payload.new.id)
-                        .single();
-                    
-                    if (shareData) {
-                        const fromUser = shareData.owner?.nickname || 'Someone';
-                        const stashLabel = shareData.drops?.label || 'a stash';
-                        
-                        // Mark as unopened
-                        markStashAsUnopened(payload.new.drop_id);
-                        
-                        // Show notification
-                        showStashNotification(fromUser, stashLabel);
-                    }
-                    
-                    // Reload drops to show the new shared stash
-                    loadDrops();
-                })
-                .on('postgres_changes', { 
-                    event: 'DELETE', 
-                    schema: 'public', 
-                    table: SHARES_TABLE,
-                    filter: `shared_with_user_id=eq.${currentUser.id}`
-                }, (payload) => {
-                    console.log('Share revoked:', payload);
-                    // Remove the drop from DOM immediately
-                    removeDropFromDOM(payload.old.drop_id);
-                })
-                .subscribe();
-            
-            // Subscribe to drops deletion (when owner deletes a shared drop)
-            sbClient.channel('drops-deletion')
-                .on('postgres_changes', { 
-                    event: 'DELETE', 
-                    schema: 'public', 
-                    table: TABLE_NAME
-                }, (payload) => {
-                    console.log('Drop deleted:', payload);
-                    // Remove from DOM immediately
-                    removeDropFromDOM(payload.old.id);
-                })
-                .subscribe();
-        }
+        // Add event listeners for the new buttons
+        document
+          .getElementById("saveEditBtn")
+          .addEventListener("click", async () => {
+            const newText = document.getElementById("editText").value.trim();
+            const newLabel = document.getElementById("editLabel").value.trim();
 
-        async function showStashNotification(fromUser, stashLabel) {
-            // Request permission if not already granted
-            if ('Notification' in window && Notification.permission === 'default') {
-                await Notification.requestPermission();
+            if (!newText) {
+              showToast("TEXT CANNOT BE EMPTY", true);
+              return;
             }
 
-            if ('Notification' in window && Notification.permission === 'granted') {
-                const title = '📤 New Stash Received';
-                const options = {
-                    body: `${fromUser} shared "${stashLabel}" with you`,
-                    icon: '/icon-192.svg',
-                    badge: '/icon-192.svg',
-                    tag: 'stash-notification',
-                    requireInteraction: false,
-                    vibrate: [200, 100, 200]
-                };
+            const { error } = await sbClient
+              .from(TABLE_NAME)
+              .update({ text: newText, label: newLabel || null })
+              .eq("id", currentDrop.id);
 
-                if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-                    // Use service worker to show notification
-                    navigator.serviceWorker.ready.then(registration => {
-                        registration.showNotification(title, options);
-                    });
-                } else {
-                    // Fallback to regular notification
-                    new Notification(title, options);
-                }
+            if (error) {
+              console.error("Update error:", error);
+              showToast("UPDATE FAILED", true);
+              return;
             }
-            
-            // Always show toast as fallback for mobile
-            showToast(`📤 ${fromUser.toUpperCase()} SHARED "${stashLabel.toUpperCase()}"`);
-        }
 
-        function markStashAsUnopened(dropId) {
-            const unopenedKey = `unopened_${currentUser.id}`;
-            let unopened = JSON.parse(localStorage.getItem(unopenedKey) || '[]');
-            if (!unopened.includes(dropId)) {
-                unopened.push(dropId);
-                localStorage.setItem(unopenedKey, JSON.stringify(unopened));
-                updateNotificationBadge(true); // true = new notification
-            }
-        }
+            showToast("STASH UPDATED");
+            closeDetail();
+            loadDrops();
+          });
 
-        function markStashAsOpened(dropId) {
-            const unopenedKey = `unopened_${currentUser.id}`;
-            let unopened = JSON.parse(localStorage.getItem(unopenedKey) || '[]');
-            unopened = unopened.filter(id => id !== dropId);
-            localStorage.setItem(unopenedKey, JSON.stringify(unopened));
-            updateNotificationBadge(false);
-        }
+        document
+          .getElementById("cancelEditBtn")
+          .addEventListener("click", () => {
+            closeDetail();
+          });
+      }
 
-        function updateNotificationBadge(isNewNotification = false) {
-            if (!currentUser) return;
-            
-            const unopenedKey = `unopened_${currentUser.id}`;
-            const unopened = JSON.parse(localStorage.getItem(unopenedKey) || '[]');
-            const badge = document.getElementById('notificationBadge');
-            
-            if (!badge) return;
-            
-            if (unopened.length > 0) {
-                badge.textContent = unopened.length;
-                badge.style.display = 'flex';
-                
-                // Add pulse animation for new notifications
-                if (isNewNotification) {
-                    badge.classList.add('notification-pop');
-                    badge.classList.add('notification-pulse');
-                    
-                    // Remove pop animation after it completes
-                    setTimeout(() => {
-                        badge.classList.remove('notification-pop');
-                    }, 500);
-                    
-                    // Keep pulse animation until user checks
-                }
-            } else {
-                badge.style.display = 'none';
-                badge.classList.remove('notification-pulse');
-            }
-        }
+      function subscribeToRealtime() {
+        sbClient
+          .channel("drops-changes")
+          .on(
+            "postgres_changes",
+            {
+              event: "*",
+              schema: "public",
+              table: TABLE_NAME,
+              filter: `user_id=eq.${currentUser.id}`,
+            },
+            () => loadDrops(),
+          )
+          .subscribe();
+      }
 
-        function removeNotificationPulse() {
-            const badge = document.getElementById('notificationBadge');
-            if (badge) {
-                badge.classList.remove('notification-pulse');
-            }
-        }
+      function showToast(message, isError) {
+        const toast = document.createElement("div");
+        toast.className = "toast" + (isError ? " error" : "");
+        toast.textContent = message;
+        document.getElementById("toastContainer").appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+      }
 
-        function removeDropFromDOM(dropId) {
-            const dropItems = document.querySelectorAll('.drop-item');
-            dropItems.forEach(item => {
-                if (item.getAttribute('onclick')?.includes(dropId)) {
-                    // Add glitch animation
-                    item.classList.add('glitch-delete');
-                    // Remove after animation
-                    setTimeout(() => {
-                        item.remove();
-                        updateStashCount();
-                    }, 600);
-                }
-            });
-            
-            // If detail panel is open for this drop, close it
-            if (currentDrop && currentDrop.id === dropId) {
-                closeDetail();
-            }
-        }
+      function formatDate(dateStr) {
+        return new Date(dateStr).toLocaleString("en-US", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
 
-        function updateStashCount() {
-            const visibleDrops = document.querySelectorAll('.drop-item:not(.glitch-delete)').length;
-            document.getElementById('stashCount').textContent = `${visibleDrops} STASH${visibleDrops !== 1 ? 'ES' : ''}`;
-        }
+      function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+      }
 
-        function showToast(message, isError) {
-            const toast = document.createElement('div');
-            toast.className = 'toast' + (isError ? ' error' : '');
-            toast.textContent = message;
-            document.getElementById('toastContainer').appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        }
+      function updateCharCount() {
+        const text = document.getElementById("textInput").value;
+        const charCount = text.length;
+        const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
+        document.getElementById("charCount").textContent =
+          `${charCount} CHARACTERS | ${wordCount} WORDS`;
+      }
 
-        function formatDate(dateStr) {
-            return new Date(dateStr).toLocaleString('en-US', {
-                year: 'numeric', month: 'short', day: 'numeric',
-                hour: '2-digit', minute: '2-digit'
-            });
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function updateCharCount() {
-            const text = document.getElementById('textInput').value;
-            const charCount = text.length;
-            const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
-            document.getElementById('charCount').textContent = `${charCount} CHARACTERS | ${wordCount} WORDS`;
-        }
-
-        function getTextStats(text) {
-            const charCount = text.length;
-            const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
-            return { charCount, wordCount };
-        }
-
-        function setupInstallPrompt() {
-            const installBtn = document.getElementById('installBtn');
-            const installBtnLock = document.getElementById('installBtnLock');
-            
-            // Check if running as PWA (standalone mode)
-            const isInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-            
-            if (isInstalled) {
-                installBtn.style.display = 'none';
-                installBtnLock.style.display = 'none';
-                return;
-            }
-            
-            // Listen for the beforeinstallprompt event
-            window.addEventListener('beforeinstallprompt', (e) => {
-                // Prevent the mini-infobar from appearing on mobile
-                e.preventDefault();
-                // Stash the event so it can be triggered later
-                deferredPrompt = e;
-            });
-
-            // Handle install button clicks
-            const handleInstallClick = async () => {
-                if (!deferredPrompt) {
-                    // Show detailed installation instructions based on device
-                    showInstallInstructions();
-                    return;
-                }
-                // Show the install prompt
-                deferredPrompt.prompt();
-                // Wait for the user to respond to the prompt
-                const { outcome } = await deferredPrompt.userChoice;
-                console.log(`User response to the install prompt: ${outcome}`);
-                
-                if (outcome === 'accepted') {
-                    showToast('APP INSTALLING...');
-                }
-                
-                // Clear the deferredPrompt
-                deferredPrompt = null;
-            };
-
-            installBtn.addEventListener('click', handleInstallClick);
-            installBtnLock.addEventListener('click', handleInstallClick);
-
-            // Hide install buttons if already installed
-            window.addEventListener('appinstalled', () => {
-                installBtn.style.display = 'none';
-                installBtnLock.style.display = 'none';
-                deferredPrompt = null;
-                localStorage.setItem('dismissedInstallPrompt', 'true');
-                showToast('APP INSTALLED SUCCESSFULLY');
-                
-                // Remove install prompt banner if visible
-                const banner = document.getElementById('installPromptBanner');
-                if (banner) {
-                    banner.remove();
-                }
-            });
-        }
-
-        function showInstallInstructions() {
-            const userAgent = navigator.userAgent.toLowerCase();
-            const isIOS = /iphone|ipad|ipod/.test(userAgent);
-            const isAndroid = /android/.test(userAgent);
-            const isSafari = /safari/.test(userAgent) && !/chrome/.test(userAgent);
-            const isChrome = /chrome/.test(userAgent);
-            
-            let instructions = '';
-            
-            if (isIOS || isSafari) {
-                // iOS Safari instructions
-                instructions = `
-                    <div style="text-align: left; line-height: 1.8;">
-                        <div style="font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: var(--primary);">📱 INSTALL STASH PWA</div>
-                        <div style="margin-bottom: 15px; color: var(--accent); font-size: 0.95rem;">This will install the full app on your device (not just a bookmark)</div>
-                        <div style="margin-bottom: 10px;"><strong>Step 1:</strong> Tap the <strong>Share</strong> button <span style="font-size: 1.2rem;">⎋</span> at the bottom</div>
-                        <div style="margin-bottom: 10px;"><strong>Step 2:</strong> Scroll down and tap <strong>"Add to Home Screen"</strong> <span style="font-size: 1.2rem;">➕</span></div>
-                        <div style="margin-bottom: 10px;"><strong>Step 3:</strong> Tap <strong>"Add"</strong> in the top right corner</div>
-                        <div style="margin-top: 15px; padding: 10px; background: rgba(201, 184, 122, 0.1); border-radius: 8px; color: var(--primary); font-size: 0.9rem;">✨ The Stash app will appear on your home screen and work like a native app!</div>
-                    </div>
-                `;
-            } else if (isAndroid || isChrome) {
-                // Android Chrome instructions
-                instructions = `
-                    <div style="text-align: left; line-height: 1.8;">
-                        <div style="font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: var(--primary);">📱 INSTALL STASH PWA</div>
-                        <div style="margin-bottom: 15px; color: var(--accent); font-size: 0.95rem;">This will install the full app on your device (not just a bookmark)</div>
-                        <div style="margin-bottom: 10px;"><strong>Step 1:</strong> Tap the <strong>Menu</strong> button <span style="font-size: 1.2rem;">⋮</span> (three dots) at the top</div>
-                        <div style="margin-bottom: 10px;"><strong>Step 2:</strong> Tap <strong>"Add to Home screen"</strong> or <strong>"Install app"</strong></div>
-                        <div style="margin-bottom: 10px;"><strong>Step 3:</strong> Tap <strong>"Install"</strong> or <strong>"Add"</strong> to confirm</div>
-                        <div style="margin-top: 15px; padding: 10px; background: rgba(201, 184, 122, 0.1); border-radius: 8px; color: var(--primary); font-size: 0.9rem;">✨ The Stash app will be installed and work offline!</div>
-                    </div>
-                `;
-            } else {
-                // Generic instructions
-                instructions = `
-                    <div style="text-align: left; line-height: 1.8;">
-                        <div style="font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: var(--primary);">📱 INSTALL STASH PWA</div>
-                        <div style="margin-bottom: 15px; color: var(--accent); font-size: 0.95rem;">This will install the full Progressive Web App on your device</div>
-                        <div style="margin-bottom: 10px;"><strong>Step 1:</strong> Open your browser menu (usually ⋮ or ⋯)</div>
-                        <div style="margin-bottom: 10px;"><strong>Step 2:</strong> Look for <strong>"Add to Home Screen"</strong> or <strong>"Install"</strong></div>
-                        <div style="margin-bottom: 10px;"><strong>Step 3:</strong> Follow the prompts to install the app</div>
-                        <div style="margin-top: 15px; padding: 10px; background: rgba(201, 184, 122, 0.1); border-radius: 8px; color: var(--primary); font-size: 0.9rem;">✨ The app will work like a native app on your device!</div>
-                    </div>
-                `;
-            }
-            
-            // Create modal overlay
-            const modal = document.createElement('div');
-            modal.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(14, 14, 15, 0.95);
-                z-index: 10000;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 20px;
-                animation: fadeIn 0.3s ease;
-            `;
-            
-            const content = document.createElement('div');
-            content.style.cssText = `
-                background: var(--bg-card);
-                max-width: 500px;
-                width: 100%;
-                padding: 30px;
-                border-radius: 12px;
-                border: 1px solid var(--border);
-                box-shadow: 0 0 40px rgba(201, 184, 122, 0.3);
-                font-family: 'Courier Prime', monospace;
-            `;
-            
-            content.innerHTML = instructions + `
-                <button class="btn" style="width: 100%; margin-top: 20px;" onclick="this.closest('div[style*=fixed]').remove()">
-                    GOT IT
-                </button>
-            `;
-            
-            modal.appendChild(content);
-            document.body.appendChild(modal);
-            
-            // Close on background click
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.remove();
-                }
-            });
-        }
+      function getTextStats(text) {
+        const charCount = text.length;
+        const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
+        return { charCount, wordCount };
+      }
     </script>
-</body>
+    <!-- Code injected by live-server -->
+    <script>
+      // <![CDATA[  <-- For SVG support
+      if ("WebSocket" in window) {
+        (function () {
+          function refreshCSS() {
+            var sheets = [].slice.call(document.getElementsByTagName("link"));
+            var head = document.getElementsByTagName("head")[0];
+            for (var i = 0; i < sheets.length; ++i) {
+              var elem = sheets[i];
+              var parent = elem.parentElement || head;
+              parent.removeChild(elem);
+              var rel = elem.rel;
+              if (
+                (elem.href && typeof rel != "string") ||
+                rel.length == 0 ||
+                rel.toLowerCase() == "stylesheet"
+              ) {
+                var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, "");
+                elem.href =
+                  url +
+                  (url.indexOf("?") >= 0 ? "&" : "?") +
+                  "_cacheOverride=" +
+                  new Date().valueOf();
+              }
+              parent.appendChild(elem);
+            }
+          }
+          var protocol =
+            window.location.protocol === "http:" ? "ws://" : "wss://";
+          var address =
+            protocol + window.location.host + window.location.pathname + "/ws";
+          var socket = new WebSocket(address);
+          socket.onmessage = function (msg) {
+            if (msg.data == "reload") window.location.reload();
+            else if (msg.data == "refreshcss") refreshCSS();
+          };
+          if (
+            sessionStorage &&
+            !sessionStorage.getItem("IsThisFirstTime_Log_From_LiveServer")
+          ) {
+            console.log("Live reload enabled.");
+            sessionStorage.setItem("IsThisFirstTime_Log_From_LiveServer", true);
+          }
+        })();
+      } else {
+        console.error(
+          "Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.",
+        );
+      }
+      // ]]>
+    </script>
+  </body>
+  <chatgpt-sidebar
+    data-rendered="true"
+    data-gpts-theme="light"
+  ></chatgpt-sidebar>
 </html>
