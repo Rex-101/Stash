@@ -70,10 +70,18 @@
            ════════════════════════════════ */
         
         #landingPage {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
             padding: 0;
+            background: var(--bg-dark);
+            z-index: 1000;
+            overflow-y: auto;
         }
 
         #landingPage.hidden { display: none; }
@@ -2054,8 +2062,11 @@
                     .eq('password', password)
                     .single();
 
+                console.log('Login attempt:', { nickname, hasPassword: !!password, user, error });
+
                 if (error || !user) {
                     showToast('INVALID CREDENTIALS', true);
+                    console.error('Login failed:', error);
                     return;
                 }
 
