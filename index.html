@@ -1802,7 +1802,7 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js" integrity="sha512-rM7W7kF1RB9ZHKFS2VNmKGMlDIeSy2Yjt+rYVdFdGY8yVL2P+oBgMZiLzKgLLyDqLU8NcpU0q5XrLvEqBQdAQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
         const SUPABASE_URL = "https://rwlsfwvtldlvhpoiylpi.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ3bHNmd3Z0bGRsdmhwb2l5bHBpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzNTYwNDcsImV4cCI6MjA5MzkzMjA0N30.qAi4YCWFml4csA3VtpdnUhniKkUi3OZTAIdI716aUNg";
@@ -1828,20 +1828,32 @@
         var currentFilter = 'all';
         var currentCategory = 'all';
         var deferredPrompt = null;
+        var bcryptReady = false;
 
-        window.addEventListener('DOMContentLoaded', () => {
+        // Wait for bcrypt to load
+        function waitForBcrypt() {
+            return new Promise((resolve) => {
+                if (typeof bcrypt !== 'undefined' && bcrypt.hash && bcrypt.compare) {
+                    bcryptReady = true;
+                    resolve();
+                } else {
+                    setTimeout(() => waitForBcrypt().then(resolve), 100);
+                }
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
             sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            
+            // Wait for bcrypt to be ready
+            await waitForBcrypt();
+            console.log('bcrypt loaded successfully');
+            
             setupEventListeners();
             checkLandingPage();
             checkSession();
             registerServiceWorker();
             setupInstallPrompt();
-            
-            // Debug: Check if bcrypt is loaded
-            console.log('bcrypt loaded:', typeof bcrypt !== 'undefined');
-            if (typeof bcrypt !== 'undefined') {
-                console.log('bcrypt object:', bcrypt);
-            }
         });
 
         function checkLandingPage() {
@@ -1988,6 +2000,12 @@
                     return;
                 }
 
+                // Ensure bcrypt is loaded
+                if (!bcryptReady) {
+                    showToast('LOADING SECURITY... PLEASE WAIT', true);
+                    await waitForBcrypt();
+                }
+
                 // Check if nickname exists
                 const { data: existing } = await sbClient
                     .from(USERS_TABLE)
@@ -2036,6 +2054,12 @@
                 if (!nickname || !password) {
                     showToast('PLEASE ENTER CREDENTIALS', true);
                     return;
+                }
+
+                // Ensure bcrypt is loaded
+                if (!bcryptReady) {
+                    showToast('LOADING SECURITY... PLEASE WAIT', true);
+                    await waitForBcrypt();
                 }
 
                 // Get user by nickname
