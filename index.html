@@ -62,7 +62,8 @@
             max-width: 900px; 
             margin: 0 auto; 
             position: relative; 
-            z-index: 1; 
+            z-index: 5; 
+            padding: 20px;
         }
 
         /* ════════════════════════════════
@@ -1866,8 +1867,16 @@
 
         function goToApp() {
             // Hide landing page and show lock screen
-            document.getElementById('landingPage').classList.add('hidden');
-            document.getElementById('lockScreen').classList.remove('hidden');
+            const landingPage = document.getElementById('landingPage');
+            const lockScreen = document.getElementById('lockScreen');
+            
+            landingPage.classList.add('hidden');
+            lockScreen.classList.remove('hidden');
+            
+            // Ensure lock screen is visible
+            lockScreen.style.display = 'flex';
+            
+            console.log('Navigating to app - Landing hidden:', landingPage.classList.contains('hidden'), 'Lock screen visible:', !lockScreen.classList.contains('hidden'));
         }
 
         function registerServiceWorker() {
