@@ -2124,9 +2124,20 @@
         try {
           showToast('COPYING IMAGE...');
           
-          // Fetch the image
-          const response = await fetch(currentViewerImageUrl);
+          // Fetch the image with CORS mode
+          const response = await fetch(currentViewerImageUrl, {
+            mode: 'cors',
+            credentials: 'omit'
+          });
+          
+          if (!response.ok) throw new Error('Failed to fetch image');
+          
           const blob = await response.blob();
+          
+          // Check if clipboard API is supported
+          if (!navigator.clipboard || !navigator.clipboard.write) {
+            throw new Error('Clipboard API not supported');
+          }
           
           // Copy to clipboard
           await navigator.clipboard.write([
@@ -2138,26 +2149,57 @@
           showToast('IMAGE COPIED TO CLIPBOARD');
         } catch (error) {
           console.error('Copy error:', error);
-          showToast('COPY FAILED - TRY DOWNLOAD INSTEAD', true);
+          // Fallback: Copy image URL instead
+          try {
+            await navigator.clipboard.writeText(currentViewerImageUrl);
+            showToast('IMAGE URL COPIED (Image copy not supported)', true);
+          } catch (e) {
+            showToast('COPY NOT SUPPORTED ON THIS BROWSER', true);
+          }
         }
       }
 
-      function downloadImage() {
+      async function downloadImage() {
         if (!currentViewerImageUrl) return;
         
         try {
-          // Create a temporary anchor element
+          showToast('DOWNLOADING IMAGE...');
+          
+          // Fetch the image as blob to bypass CORS
+          const response = await fetch(currentViewerImageUrl, {
+            mode: 'cors',
+            credentials: 'omit'
+          });
+          
+          if (!response.ok) throw new Error('Failed to fetch image');
+          
+          const blob = await response.blob();
+          
+          // Create blob URL
+          const blobUrl = URL.createObjectURL(blob);
+          
+          // Create download link
           const a = document.createElement('a');
-          a.href = currentViewerImageUrl;
+          a.href = blobUrl;
           a.download = 'stash-image-' + Date.now() + '.jpg';
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
           
-          showToast('IMAGE DOWNLOADING...');
+          // Clean up blob URL
+          setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+          
+          showToast('IMAGE DOWNLOADED');
         } catch (error) {
           console.error('Download error:', error);
-          showToast('DOWNLOAD FAILED', true);
+          
+          // Fallback: Open in new tab
+          try {
+            window.open(currentViewerImageUrl, '_blank');
+            showToast('IMAGE OPENED IN NEW TAB - Right-click to save', true);
+          } catch (e) {
+            showToast('DOWNLOAD FAILED', true);
+          }
         }
       }
 
