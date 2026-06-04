@@ -1105,7 +1105,19 @@
           </div>
           <div class="input-row">
             <input type="text" id="labelInput" placeholder="LABEL (OPTIONAL)" />
-            <button class="btn" id="saveBtn">STASH IT</button>
+          </div>
+          <div class="input-row" style="margin-top: 10px;">
+            <input type="file" id="imageInput" accept="image/*" style="display: none;" />
+            <button class="btn btn-secondary" onclick="document.getElementById('imageInput').click()" style="flex: 1;">
+              📷 ADD IMAGE
+            </button>
+            <button class="btn" id="saveBtn" style="flex: 1;">STASH IT</button>
+          </div>
+          <div id="imagePreview" style="margin-top: 15px; display: none;">
+            <div style="position: relative; display: inline-block;">
+              <img id="previewImg" style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 1px solid var(--border);" />
+              <button onclick="clearImagePreview()" style="position: absolute; top: -10px; right: -10px; background: var(--danger); color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; font-weight: bold;">×</button>
+            </div>
           </div>
         </div>
         <div class="search-bar">
@@ -1241,6 +1253,7 @@
         <div class="drop-label" id="detailLabel" style="display: block">
           Testing my app
         </div>
+        <img id="detailImage" style="display: none; max-width: 100%; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--border);" alt="Stash image" />
         <div class="drop-text" id="detailText">
           My first saved text in my vault, I am so happy
         </div>
@@ -1351,6 +1364,13 @@
       const TABLE_NAME = "drops";
       const USERS_TABLE = "users";
       const SHARES_TABLE = "shared_drops";
+      
+      // Cloudinary Configuration
+      const CLOUDINARY_CLOUD_NAME = "YOUR_CLOUD_NAME"; // Replace with your Cloudinary cloud name
+      const CLOUDINARY_UPLOAD_PRESET = "YOUR_UPLOAD_PRESET"; // Replace with your unsigned upload preset
+      const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
+      
+      var selectedImage = null;
 
       var sbClient;
       var drops = [];
@@ -1408,6 +1428,7 @@
         document
           .getElementById("textInput")
           .addEventListener("input", updateCharCount);
+        document.getElementById("imageInput").addEventListener("change", handleImageSelect);
         document.getElementById("copyBtn").addEventListener("click", copyDrop);
         document.getElementById("editBtn").addEventListener("click", editDrop);
         document
@@ -1666,14 +1687,31 @@
         const text = document.getElementById("textInput").value.trim();
         const label = document.getElementById("labelInput").value.trim();
 
-        if (!text) {
-          showToast("NO DATA ENTERED", true);
+        if (!text && !selectedImage) {
+          showToast("NO DATA OR IMAGE ENTERED", true);
           return;
         }
 
-        const { data, error } = await sbClient
+        let imageUrl = null;
+        
+        // Upload image to Cloudinary if selected
+        if (selectedImage) {
+          showToast("UPLOADING IMAGE...");
+          imageUrl = await uploadToCloudinary(selectedImage);
+          if (!imageUrl) {
+            showToast("IMAGE UPLOAD FAILED", true);
+            return;
+          }
+        }
+
+        const { data, error} = await sbClient
           .from(TABLE_NAME)
-          .insert([{ text, label: label || null, user_id: currentUser.id }])
+          .insert([{ 
+            text: text || null, 
+            label: label || null, 
+            image_url: imageUrl,
+            user_id: currentUser.id 
+          }])
           .select();
 
         if (error) {
@@ -1684,8 +1722,68 @@
 
         document.getElementById("textInput").value = "";
         document.getElementById("labelInput").value = "";
+        clearImagePreview();
         showToast("DATA SAVED");
         loadDrops();
+      }
+
+      function handleImageSelect(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        // Validate file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          showToast("IMAGE TOO LARGE (MAX 5MB)", true);
+          e.target.value = '';
+          return;
+        }
+        
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+          showToast("PLEASE SELECT AN IMAGE FILE", true);
+          e.target.value = '';
+          return;
+        }
+        
+        selectedImage = file;
+        
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          document.getElementById('previewImg').src = event.target.result;
+          document.getElementById('imagePreview').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function clearImagePreview() {
+        selectedImage = null;
+        document.getElementById('imageInput').value = '';
+        document.getElementById('imagePreview').style.display = 'none';
+        document.getElementById('previewImg').src = '';
+      }
+
+      async function uploadToCloudinary(file) {
+        try {
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+          
+          const response = await fetch(CLOUDINARY_URL, {
+            method: 'POST',
+            body: formData
+          });
+          
+          if (!response.ok) {
+            throw new Error('Upload failed');
+          }
+          
+          const data = await response.json();
+          return data.secure_url;
+        } catch (error) {
+          console.error('Cloudinary upload error:', error);
+          return null;
+        }
       }
 
       function renderDrops(filteredDrops) {
@@ -1724,7 +1822,8 @@
                         : ""
                     }
                     ${drop.label ? `<div class="drop-label">${escapeHtml(drop.label)}</div>` : ""}
-                    <div class="drop-text">${escapeHtml(drop.text)}</div>
+                    ${drop.image_url ? `<img src="${drop.image_url}" style="max-width: 100%; border-radius: 8px; margin-bottom: 10px; border: 1px solid var(--border);" alt="Stash image" />` : ""}
+                    ${drop.text ? `<div class="drop-text">${escapeHtml(drop.text)}</div>` : ""}
                     <div class="drop-date">${formatDate(drop.created_at)}</div>
                 </div>
             `,
@@ -1816,13 +1915,24 @@
         document.getElementById("detailLabel").style.display = currentDrop.label
           ? "block"
           : "none";
-        document.getElementById("detailText").textContent = currentDrop.text;
+        
+        // Display image if exists
+        const detailImage = document.getElementById("detailImage");
+        if (currentDrop.image_url) {
+          detailImage.src = currentDrop.image_url;
+          detailImage.style.display = "block";
+        } else {
+          detailImage.style.display = "none";
+        }
+        
+        document.getElementById("detailText").textContent = currentDrop.text || "";
         document.getElementById("detailDate").textContent = formatDate(
           currentDrop.created_at,
         );
 
         // Show character and word count
-        const stats = getTextStats(currentDrop.text);
+        const text = currentDrop.text || "";
+        const stats = getTextStats(text);
         document.getElementById("detailStats").textContent =
           `${stats.charCount} CHARS | ${stats.wordCount} WORDS`;
 
