@@ -1253,7 +1253,7 @@
         <div class="drop-label" id="detailLabel" style="display: block">
           Testing my app
         </div>
-        <img id="detailImage" style="display: none; max-width: 100%; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--border);" alt="Stash image" />
+        <img id="detailImage" style="display: none; width: 100%; height: 250px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--border); cursor: pointer;" alt="Stash image" onclick="openImageViewer(this.src)" />
         <div class="drop-text" id="detailText">
           My first saved text in my vault, I am so happy
         </div>
@@ -1355,6 +1355,22 @@
     </div>
 
     <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Image Viewer Modal -->
+    <div id="imageViewerModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 2000; align-items: center; justify-content: center; flex-direction: column;">
+      <button onclick="closeImageViewer()" style="position: absolute; top: 20px; right: 20px; background: var(--danger); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 1.5rem; font-weight: bold; z-index: 2001;">×</button>
+      
+      <img id="viewerImage" style="max-width: 90%; max-height: 70vh; border-radius: 8px; box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);" />
+      
+      <div style="display: flex; gap: 15px; margin-top: 30px;">
+        <button class="btn" onclick="copyImageToClipboard()" style="padding: 12px 30px;">
+          📋 COPY IMAGE
+        </button>
+        <button class="btn btn-secondary" onclick="downloadImage()" style="padding: 12px 30px;">
+          💾 DOWNLOAD
+        </button>
+      </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
@@ -1470,6 +1486,7 @@
             document.getElementById("searchInput").focus();
           }
           if (e.key === "Escape") {
+            closeImageViewer();
             closeDetail();
           }
         });
@@ -1842,7 +1859,7 @@
                         : ""
                     }
                     ${drop.label ? `<div class="drop-label">${escapeHtml(drop.label)}</div>` : ""}
-                    ${drop.image_url ? `<img src="${drop.image_url}" style="max-width: 100%; border-radius: 8px; margin-bottom: 10px; border: 1px solid var(--border);" alt="Stash image" />` : ""}
+                    ${drop.image_url ? `<img src="${drop.image_url}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 10px; border: 1px solid var(--border); cursor: pointer;" alt="Stash image" onclick="event.stopPropagation(); openImageViewer('${drop.image_url}')" />` : ""}
                     ${drop.text ? `<div class="drop-text">${escapeHtml(drop.text)}</div>` : ""}
                     <div class="drop-date">${formatDate(drop.created_at)}</div>
                 </div>
@@ -2085,6 +2102,63 @@
       function closeDetail() {
         document.getElementById("detailPanel").classList.remove("active");
         currentDrop = null;
+      }
+
+      // Image Viewer Functions
+      var currentViewerImageUrl = null;
+
+      function openImageViewer(imageUrl) {
+        currentViewerImageUrl = imageUrl;
+        document.getElementById('viewerImage').src = imageUrl;
+        document.getElementById('imageViewerModal').style.display = 'flex';
+      }
+
+      function closeImageViewer() {
+        document.getElementById('imageViewerModal').style.display = 'none';
+        currentViewerImageUrl = null;
+      }
+
+      async function copyImageToClipboard() {
+        if (!currentViewerImageUrl) return;
+        
+        try {
+          showToast('COPYING IMAGE...');
+          
+          // Fetch the image
+          const response = await fetch(currentViewerImageUrl);
+          const blob = await response.blob();
+          
+          // Copy to clipboard
+          await navigator.clipboard.write([
+            new ClipboardItem({
+              [blob.type]: blob
+            })
+          ]);
+          
+          showToast('IMAGE COPIED TO CLIPBOARD');
+        } catch (error) {
+          console.error('Copy error:', error);
+          showToast('COPY FAILED - TRY DOWNLOAD INSTEAD', true);
+        }
+      }
+
+      function downloadImage() {
+        if (!currentViewerImageUrl) return;
+        
+        try {
+          // Create a temporary anchor element
+          const a = document.createElement('a');
+          a.href = currentViewerImageUrl;
+          a.download = 'stash-image-' + Date.now() + '.jpg';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          
+          showToast('IMAGE DOWNLOADING...');
+        } catch (error) {
+          console.error('Download error:', error);
+          showToast('DOWNLOAD FAILED', true);
+        }
       }
 
       async function copyDrop() {
