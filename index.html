@@ -1025,6 +1025,176 @@
         animation: glitchDelete 0.6s ease-out forwards;
         pointer-events: none;
       }
+
+      /* Install Notification Banner */
+      .install-notification {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: var(--bg-dark);
+        padding: 16px 24px;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(201, 184, 122, 0.4),
+                    0 0 60px rgba(201, 184, 122, 0.3);
+        display: none;
+        align-items: center;
+        gap: 15px;
+        z-index: 1000;
+        max-width: 90%;
+        animation: slideUpBounce 0.6s ease-out;
+        font-family: 'Syne', sans-serif;
+      }
+
+      .install-notification.show {
+        display: flex;
+      }
+
+      @keyframes slideUpBounce {
+        0% {
+          transform: translate(-50%, 100px);
+          opacity: 0;
+        }
+        60% {
+          transform: translate(-50%, -10px);
+          opacity: 1;
+        }
+        80% {
+          transform: translate(-50%, 5px);
+        }
+        100% {
+          transform: translate(-50%, 0);
+        }
+      }
+
+      .install-notification-icon {
+        font-size: 2rem;
+        animation: bounce 2s ease-in-out infinite;
+      }
+
+      @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+      }
+
+      .install-notification-content {
+        flex: 1;
+      }
+
+      .install-notification-title {
+        font-weight: 700;
+        font-size: 1rem;
+        letter-spacing: 1px;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+      }
+
+      .install-notification-text {
+        font-size: 0.85rem;
+        opacity: 0.9;
+        font-family: 'Courier Prime', monospace;
+      }
+
+      .install-notification-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .install-notification-btn {
+        padding: 8px 20px;
+        border: 2px solid var(--bg-dark);
+        background: transparent;
+        color: var(--bg-dark);
+        border-radius: 6px;
+        cursor: pointer;
+        font-family: 'Syne', sans-serif;
+        font-weight: 600;
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        transition: all 0.3s;
+      }
+
+      .install-notification-btn:hover {
+        background: var(--bg-dark);
+        color: var(--primary);
+        transform: scale(1.05);
+      }
+
+      .install-notification-btn.primary {
+        background: var(--bg-dark);
+        color: var(--primary);
+      }
+
+      .install-notification-btn.primary:hover {
+        background: rgba(14, 14, 15, 0.8);
+        transform: scale(1.05);
+      }
+
+      .install-notification-close {
+        background: transparent;
+        border: none;
+        color: var(--bg-dark);
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 0;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.3s;
+      }
+
+      .install-notification-close:hover {
+        background: rgba(14, 14, 15, 0.2);
+        transform: rotate(90deg);
+      }
+
+      @media (max-width: 768px) {
+        .install-notification {
+          flex-direction: column;
+          text-align: center;
+          padding: 20px;
+          bottom: 10px;
+          left: 10px;
+          right: 10px;
+          transform: none;
+          max-width: none;
+        }
+
+        .install-notification.show {
+          display: flex;
+        }
+
+        .install-notification-actions {
+          width: 100%;
+          flex-direction: column;
+        }
+
+        .install-notification-btn {
+          width: 100%;
+        }
+
+        @keyframes slideUpBounce {
+          0% {
+            transform: translateY(100px);
+            opacity: 0;
+          }
+          60% {
+            transform: translateY(-10px);
+            opacity: 1;
+          }
+          80% {
+            transform: translateY(5px);
+          }
+          100% {
+            transform: translateY(0);
+          }
+        }
+      }
     </style>
     <style>
       @font-face {
@@ -1478,6 +1648,20 @@
 
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- Install Notification Banner -->
+    <div class="install-notification" id="installNotification">
+      <div class="install-notification-icon">📱</div>
+      <div class="install-notification-content">
+        <div class="install-notification-title">Install STASH App</div>
+        <div class="install-notification-text">Get the full app experience - works offline!</div>
+      </div>
+      <div class="install-notification-actions">
+        <button class="install-notification-btn primary" onclick="installFromNotification()">Install Now</button>
+        <button class="install-notification-btn" onclick="dismissInstallNotification()">Later</button>
+      </div>
+      <button class="install-notification-close" onclick="dismissInstallNotification()">×</button>
+    </div>
+
     <!-- Category Selection Modal -->
     <div id="categoryModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 3000; align-items: center; justify-content: center;">
       <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 30px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto;">
@@ -1674,6 +1858,47 @@
         }
         
         alert(instructions);
+      }
+
+      // Install Notification Functions
+      function showInstallNotification() {
+        // Check if already installed
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+          return; // Already installed, don't show
+        }
+
+        // Check if user dismissed it recently
+        const dismissed = localStorage.getItem('installNotificationDismissed');
+        if (dismissed) {
+          const dismissedTime = parseInt(dismissed);
+          const daysSinceDismissed = (Date.now() - dismissedTime) / (1000 * 60 * 60 * 24);
+          if (daysSinceDismissed < 7) {
+            return; // Don't show again for 7 days
+          }
+        }
+
+        // Show the notification
+        const notification = document.getElementById('installNotification');
+        notification.classList.add('show');
+      }
+
+      function dismissInstallNotification() {
+        const notification = document.getElementById('installNotification');
+        notification.classList.remove('show');
+        
+        // Remember dismissal for 7 days
+        localStorage.setItem('installNotificationDismissed', Date.now().toString());
+      }
+
+      async function installFromNotification() {
+        // Hide the notification
+        dismissInstallNotification();
+        
+        // Clear the dismissal so it can show again if install fails
+        localStorage.removeItem('installNotificationDismissed');
+        
+        // Trigger install
+        await installPWA();
       }
 
       function registerServiceWorker() {
@@ -1922,6 +2147,11 @@
           currentUser.nickname.toUpperCase();
         loadDrops();
         subscribeToRealtime();
+        
+        // Show install notification after a short delay
+        setTimeout(() => {
+          showInstallNotification();
+        }, 2000);
       }
 
       async function loadDrops() {
