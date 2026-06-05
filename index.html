@@ -1109,7 +1109,10 @@
               <div class="logo-name">ST<span>A</span>SH</div>
             </div>
           </a>
-          <div style="display: flex; gap: 15px; align-items: center">
+          <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <button class="btn" id="installBtn" onclick="installPWA()" style="padding: 10px 20px; font-size: 0.85rem; display: none;">
+              📥 INSTALL APP
+            </button>
             <span
               style="
                 color: var(--primary);
@@ -1496,13 +1499,106 @@
       var currentDrop = null;
       var currentUser = null;
       var currentFilter = "all";
+      var deferredPrompt = null; // For PWA install prompt
 
       window.addEventListener("DOMContentLoaded", () => {
         sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         setupEventListeners();
+        setupPWAInstall();
         checkSession();
         registerServiceWorker();
       });
+
+      // PWA Install Setup
+      function setupPWAInstall() {
+        // Listen for beforeinstallprompt event
+        window.addEventListener('beforeinstallprompt', (e) => {
+          // Prevent the mini-infobar from appearing on mobile
+          e.preventDefault();
+          // Stash the event so it can be triggered later
+          deferredPrompt = e;
+          // Show install button
+          const installBtn = document.getElementById('installBtn');
+          if (installBtn) {
+            installBtn.style.display = 'block';
+          }
+          console.log('PWA install prompt available');
+        });
+
+        // Listen for app installed event
+        window.addEventListener('appinstalled', () => {
+          console.log('PWA was installed');
+          deferredPrompt = null;
+          const installBtn = document.getElementById('installBtn');
+          if (installBtn) {
+            installBtn.style.display = 'none';
+          }
+          showToast('APP INSTALLED SUCCESSFULLY!');
+        });
+
+        // Check if already installed
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+          console.log('PWA already installed');
+          const installBtn = document.getElementById('installBtn');
+          if (installBtn) {
+            installBtn.style.display = 'none';
+          }
+        }
+      }
+
+      async function installPWA() {
+        if (!deferredPrompt) {
+          // Already installed or not supported
+          if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+            showToast('APP ALREADY INSTALLED', false);
+          } else {
+            // Show manual instructions for iOS and other browsers
+            showManualInstallInstructions();
+          }
+          return;
+        }
+
+        // Show the install prompt
+        deferredPrompt.prompt();
+
+        // Wait for the user to respond to the prompt
+        const { outcome } = await deferredPrompt.userChoice;
+        
+        if (outcome === 'accepted') {
+          console.log('User accepted the install prompt');
+          showToast('INSTALLING APP...');
+        } else {
+          console.log('User dismissed the install prompt');
+          showToast('INSTALL CANCELLED', true);
+        }
+
+        // Clear the deferred prompt
+        deferredPrompt = null;
+      }
+
+      function showManualInstallInstructions() {
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isAndroid = /Android/.test(navigator.userAgent);
+        
+        let instructions = 'TO INSTALL THIS APP:\n\n';
+        
+        if (isIOS) {
+          instructions += '1. Tap the Share button (square with arrow)\n';
+          instructions += '2. Scroll and tap "Add to Home Screen"\n';
+          instructions += '3. Tap "Add" in the top right';
+        } else if (isAndroid) {
+          instructions += '1. Tap the menu (three dots)\n';
+          instructions += '2. Tap "Install app" or "Add to Home screen"\n';
+          instructions += '3. Tap "Install"';
+        } else {
+          instructions += 'DESKTOP:\n';
+          instructions += '1. Click the install icon in the address bar\n';
+          instructions += '2. OR: Menu → Install Stash\n\n';
+          instructions += 'The app will open in its own window!';
+        }
+        
+        alert(instructions);
+      }
 
       function registerServiceWorker() {
         if ("serviceWorker" in navigator) {
