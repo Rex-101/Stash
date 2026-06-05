@@ -1920,37 +1920,46 @@
         if ("serviceWorker" in navigator) {
           console.log('[PWA] Registering service worker...');
           
-          // Clear old caches
-          caches.keys().then(function (names) {
-            for (let name of names) {
-              if (name !== "stash-v2.0") {
-                console.log('[PWA] Clearing old cache:', name);
-                caches.delete(name);
-              }
-            }
+          // Unregister all old service workers first
+          navigator.serviceWorker.getRegistrations().then((registrations) => {
+            registrations.forEach((registration) => {
+              console.log('[PWA] Unregistering old SW');
+              registration.unregister();
+            });
           });
 
-          // Register new service worker
-          navigator.serviceWorker
-            .register("/sw.js")
-            .then((registration) => {
-              console.log("[PWA] ✅ Service Worker registered successfully!");
-              console.log("[PWA] Scope:", registration.scope);
-              
-              // Check for updates
-              registration.addEventListener('updatefound', () => {
-                const newWorker = registration.installing;
-                console.log('[PWA] Update found, installing...');
-                newWorker.addEventListener('statechange', () => {
-                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    console.log('[PWA] ✅ New version installed!');
-                  }
-                });
-              });
-            })
-            .catch((error) => {
-              console.error("[PWA] ❌ Service Worker registration failed:", error);
+          // Clear all caches
+          caches.keys().then((names) => {
+            names.forEach((name) => {
+              console.log('[PWA] Clearing cache:', name);
+              caches.delete(name);
             });
+          });
+
+          // Wait a bit then register fresh service worker
+          setTimeout(() => {
+            navigator.serviceWorker
+              .register("/sw.js")
+              .then((registration) => {
+                console.log("[PWA] ✅ Service Worker registered successfully!");
+                console.log("[PWA] Scope:", registration.scope);
+                console.log("[PWA] Waiting for beforeinstallprompt event...");
+                
+                // Check for updates
+                registration.addEventListener('updatefound', () => {
+                  const newWorker = registration.installing;
+                  console.log('[PWA] Update found, installing...');
+                  newWorker.addEventListener('statechange', () => {
+                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                      console.log('[PWA] ✅ New version installed!');
+                    }
+                  });
+                });
+              })
+              .catch((error) => {
+                console.error("[PWA] ❌ Service Worker registration failed:", error);
+              });
+          }, 100);
         } else {
           console.error('[PWA] ❌ Service Worker not supported in this browser');
         }
