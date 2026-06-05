@@ -1,169 +1,122 @@
-<<<<<<< HEAD
-// Service worker v6 - Force cache clear
-const CACHE_VERSION = 'v6-clean';
-
-self.addEventListener('install', event => {
-  console.log('Service worker v6 installing - clearing all caches');
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          console.log('Deleting cache:', cacheName);
-          return caches.delete(cacheName);
-        })
-      );
-    }).then(() => {
-      console.log('All caches cleared, activating immediately');
-      return self.skipWaiting();
-    })
-  );
-});
-
-self.addEventListener('activate', event => {
-  console.log('Service worker v6 activated');
-  event.waitUntil(self.clients.claim());
-});
-
-// Handle push notifications
-self.addEventListener('push', event => {
-  console.log('Push notification received:', event);
-  
-  let notificationData = {
-    title: 'New Stash Received',
-    body: 'Someone shared a stash with you',
-    icon: '/icon-192.svg',
-    badge: '/icon-192.svg',
-    tag: 'stash-notification',
-    requireInteraction: false,
-    data: {
-      url: '/'
-    }
-  };
-
-  if (event.data) {
-    try {
-      const data = event.data.json();
-      notificationData = {
-        title: data.title || 'New Stash Received',
-        body: data.body || `${data.from} shared a stash with you`,
-        icon: '/icon-192.svg',
-        badge: '/icon-192.svg',
-        tag: 'stash-notification',
-        requireInteraction: false,
-        data: {
-          url: data.url || '/'
-        }
-      };
-    } catch (e) {
-      console.error('Error parsing push data:', e);
-    }
-  }
-
-  event.waitUntil(
-    self.registration.showNotification(notificationData.title, notificationData)
-  );
-});
-
-// Handle notification clicks
-self.addEventListener('notificationclick', event => {
-  console.log('Notification clicked:', event);
-  event.notification.close();
-
-  event.waitUntil(
-    clients.openWindow(event.notification.data.url || '/')
-  );
-});
-
-// Always fetch from network - no caching
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    fetch(event.request)
-      .then(response => {
-        // Return fresh response without caching
-        return response;
-      })
-      .catch(() => {
-        return new Response('Offline - please check your connection', {
-          status: 503,
-          statusText: 'Service Unavailable'
-        });
-      })
-  );
-});
-
-=======
-const CACHE_NAME = 'stash-v2-theme';
-const urlsToCache = [
+// STASH Service Worker v2.0 - Enhanced PWA Experience
+const CACHE_VERSION = 'stash-v2.0';
+const CACHE_ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
   '/favicon.svg',
   '/icon-192.svg',
-  '/icon-512.svg',
-  'https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Courier+Prime:wght@400;700&display=swap',
-  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2'
+  '/icon-512.svg'
 ];
 
-// Install service worker and skip waiting
+// Install - Cache essential assets
 self.addEventListener('install', event => {
+  console.log('[Service Worker] Installing Stash v2.0');
   event.waitUntil(
-    caches.open(CACHE_NAME)
+    caches.open(CACHE_VERSION)
       .then(cache => {
-        console.log('Opened cache v2');
-        return cache.addAll(urlsToCache);
+        console.log('[Service Worker] Caching app shell');
+        return cache.addAll(CACHE_ASSETS);
       })
-      .then(() => self.skipWaiting()) // Force immediate activation
+      .then(() => self.skipWaiting())
   );
 });
 
-// Network first, then cache (for HTML to always get latest)
-self.addEventListener('fetch', event => {
-  if (event.request.url.includes('.html') || event.request.url === self.registration.scope) {
-    // For HTML files, always try network first
-    event.respondWith(
-      fetch(event.request)
-        .then(response => {
-          // Clone the response before caching
-          const responseToCache = response.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, responseToCache);
-          });
-          return response;
-        })
-        .catch(() => {
-          // If network fails, try cache
-          return caches.match(event.request);
-        })
-    );
-  } else {
-    // For other resources, cache first
-    event.respondWith(
-      caches.match(event.request)
-        .then(response => {
-          if (response) {
-            return response;
-          }
-          return fetch(event.request);
-        })
-    );
-  }
-});
-
-// Update service worker and claim clients immediately
+// Activate - Clean old caches
 self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
+  console.log('[Service Worker] Activating Stash v2.0');
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
         cacheNames.map(cacheName => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            console.log('Deleting old cache:', cacheName);
+          if (cacheName !== CACHE_VERSION) {
+            console.log('[Service Worker] Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
-    }).then(() => self.clients.claim()) // Take control immediately
+    }).then(() => self.clients.claim())
   );
 });
 
->>>>>>> e4e74bc40e79f6e8177b03f5b32540155228face
+// Fetch - Network first for HTML, cache first for assets
+self.addEventListener('fetch', event => {
+  const { request } = event;
+  const url = new URL(request.url);
+
+  // Skip non-GET requests
+  if (request.method !== 'GET') {
+    return;
+  }
+
+  // Skip external API calls (Supabase, Cloudinary)
+  if (url.origin !== self.location.origin) {
+    return;
+  }
+
+  // Network first for HTML (always get latest)
+  if (request.headers.get('accept').includes('text/html')) {
+    event.respondWith(
+      fetch(request)
+        .then(response => {
+          // Update cache with fresh HTML
+          const responseClone = response.clone();
+          caches.open(CACHE_VERSION).then(cache => {
+            cache.put(request, responseClone);
+          });
+          return response;
+        })
+        .catch(() => {
+          // Fallback to cache if offline
+          return caches.match(request);
+        })
+    );
+    return;
+  }
+
+  // Cache first for other assets (faster loading)
+  event.respondWith(
+    caches.match(request)
+      .then(cachedResponse => {
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+        return fetch(request).then(response => {
+          // Cache new assets
+          if (response.status === 200) {
+            const responseClone = response.clone();
+            caches.open(CACHE_VERSION).then(cache => {
+              cache.put(request, responseClone);
+            });
+          }
+          return response;
+        });
+      })
+  );
+});
+
+// Handle push notifications (for future features)
+self.addEventListener('push', event => {
+  console.log('[Service Worker] Push notification received');
+  
+  const options = {
+    body: event.data ? event.data.text() : 'New update available',
+    icon: '/icon-192.svg',
+    badge: '/favicon.svg',
+    vibrate: [200, 100, 200],
+    tag: 'stash-notification',
+    requireInteraction: false
+  };
+
+  event.waitUntil(
+    self.registration.showNotification('STASH', options)
+  );
+});
+
+// Handle notification clicks
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  event.waitUntil(
+    clients.openWindow('/')
+  );
+});

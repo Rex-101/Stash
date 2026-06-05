@@ -1647,21 +1647,30 @@
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         const isAndroid = /Android/.test(navigator.userAgent);
         
-        let instructions = 'TO INSTALL THIS APP:\n\n';
+        let instructions = '📱 INSTALL STASH AS AN APP\n\n';
+        instructions += 'Installing STASH will:\n';
+        instructions += '✓ Add it to your home screen\n';
+        instructions += '✓ Open in full-screen (no browser)\n';
+        instructions += '✓ Work offline\n';
+        instructions += '✓ Feel like a native app\n\n';
+        instructions += 'HOW TO INSTALL:\n\n';
         
         if (isIOS) {
-          instructions += '1. Tap the Share button (square with arrow)\n';
-          instructions += '2. Scroll and tap "Add to Home Screen"\n';
-          instructions += '3. Tap "Add" in the top right';
+          instructions += '1. Tap the Share button 📤 (at bottom)\n';
+          instructions += '2. Scroll down and tap "Add to Home Screen"\n';
+          instructions += '3. Tap "Add" in the top right\n';
+          instructions += '4. Open STASH from your home screen!';
         } else if (isAndroid) {
-          instructions += '1. Tap the menu (three dots)\n';
+          instructions += '1. Tap the menu ⋮ (three dots)\n';
           instructions += '2. Tap "Install app" or "Add to Home screen"\n';
-          instructions += '3. Tap "Install"';
+          instructions += '3. Tap "Install"\n';
+          instructions += '4. Open STASH from your home screen!';
         } else {
           instructions += 'DESKTOP:\n';
-          instructions += '1. Click the install icon in the address bar\n';
-          instructions += '2. OR: Menu → Install Stash\n\n';
-          instructions += 'The app will open in its own window!';
+          instructions += '1. Look for the install icon ⊕ in the address bar\n';
+          instructions += '2. OR: Browser Menu → Install Stash\n';
+          instructions += '3. The app will open in its own window!\n\n';
+          instructions += 'Note: This is a PWA (Progressive Web App)';
         }
         
         alert(instructions);
@@ -1669,35 +1678,35 @@
 
       function registerServiceWorker() {
         if ("serviceWorker" in navigator) {
-          // First, unregister old service workers and clear old caches
-          navigator.serviceWorker
-            .getRegistrations()
-            .then(function (registrations) {
-              for (let registration of registrations) {
-                registration.unregister();
-              }
-            });
-
+          // Clear old caches
           caches.keys().then(function (names) {
             for (let name of names) {
-              if (name !== "stash-v2-theme") {
+              if (name !== "stash-v2.0") {
                 caches.delete(name);
               }
             }
           });
 
-          // Register new service worker after a short delay
-          setTimeout(() => {
-            navigator.serviceWorker
-              .register("sw.js")
-              .then((reg) => {
-                console.log("Service Worker v2 registered");
-                reg.update();
-              })
-              .catch((err) =>
-                console.log("Service Worker registration failed:", err),
-              );
-          }, 500);
+          // Register new service worker
+          navigator.serviceWorker
+            .register("/sw.js")
+            .then((registration) => {
+              console.log("[PWA] Service Worker registered:", registration.scope);
+              
+              // Check for updates
+              registration.addEventListener('updatefound', () => {
+                const newWorker = registration.installing;
+                newWorker.addEventListener('statechange', () => {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    // New version available
+                    console.log('[PWA] New version available!');
+                  }
+                });
+              });
+            })
+            .catch((error) => {
+              console.log("[PWA] Service Worker registration failed:", error);
+            });
         }
       }
 
