@@ -1,20 +1,23 @@
 ﻿<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
     <meta
       http-equiv="Cache-Control"
       content="no-cache, no-store, must-revalidate"
     />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#c9b87a" />
     <meta name="description" content="Save here. Access everywhere." />
     <meta name="application-name" content="STASH" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="STASH" />
+    <meta name="format-detection" content="telephone=no" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="apple-touch-icon" href="icon-192.svg" />
     <link rel="apple-touch-icon" sizes="192x192" href="icon-192.svg" />
     <link rel="apple-touch-icon" sizes="512x512" href="icon-512.svg" />
     <link rel="manifest" href="manifest.json" />
@@ -1803,13 +1806,13 @@
           if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
             showToast('APP ALREADY INSTALLED', false);
           } else {
-            // Show manual instructions for iOS and other browsers
-            showManualInstallInstructions();
+            // No install prompt available - browser doesn't support it or already dismissed
+            showToast('INSTALL NOT AVAILABLE IN THIS BROWSER', true);
           }
           return;
         }
 
-        // Show the install prompt
+        // Show the native browser install prompt
         deferredPrompt.prompt();
 
         // Wait for the user to respond to the prompt
@@ -1818,46 +1821,11 @@
         if (outcome === 'accepted') {
           console.log('User accepted the install prompt');
           showToast('INSTALLING APP...');
+          deferredPrompt = null;
         } else {
           console.log('User dismissed the install prompt');
           showToast('INSTALL CANCELLED', true);
         }
-
-        // Clear the deferred prompt
-        deferredPrompt = null;
-      }
-
-      function showManualInstallInstructions() {
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        const isAndroid = /Android/.test(navigator.userAgent);
-        
-        let instructions = '📱 INSTALL STASH AS AN APP\n\n';
-        instructions += 'Installing STASH will:\n';
-        instructions += '✓ Add it to your home screen\n';
-        instructions += '✓ Open in full-screen (no browser)\n';
-        instructions += '✓ Work offline\n';
-        instructions += '✓ Feel like a native app\n\n';
-        instructions += 'HOW TO INSTALL:\n\n';
-        
-        if (isIOS) {
-          instructions += '1. Tap the Share button 📤 (at bottom)\n';
-          instructions += '2. Scroll down and tap "Add to Home Screen"\n';
-          instructions += '3. Tap "Add" in the top right\n';
-          instructions += '4. Open STASH from your home screen!';
-        } else if (isAndroid) {
-          instructions += '1. Tap the menu ⋮ (three dots)\n';
-          instructions += '2. Tap "Install app" or "Add to Home screen"\n';
-          instructions += '3. Tap "Install"\n';
-          instructions += '4. Open STASH from your home screen!';
-        } else {
-          instructions += 'DESKTOP:\n';
-          instructions += '1. Look for the install icon ⊕ in the address bar\n';
-          instructions += '2. OR: Browser Menu → Install Stash\n';
-          instructions += '3. The app will open in its own window!\n\n';
-          instructions += 'Note: This is a PWA (Progressive Web App)';
-        }
-        
-        alert(instructions);
       }
 
       // Install Notification Functions
@@ -1865,6 +1833,11 @@
         // Check if already installed
         if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
           return; // Already installed, don't show
+        }
+
+        // Only show if native install prompt is available
+        if (!deferredPrompt) {
+          return; // No install prompt available
         }
 
         // Check if user dismissed it recently
