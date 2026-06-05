@@ -1783,47 +1783,89 @@
 
       // PWA Install Setup
       function setupPWAInstall() {
+        console.log('[PWA] Setting up install handlers...');
+        
         // Listen for beforeinstallprompt event
         window.addEventListener('beforeinstallprompt', (e) => {
+          console.log('[PWA] ✅ beforeinstallprompt event fired!');
           // Prevent the mini-infobar from appearing on mobile
           e.preventDefault();
           // Stash the event so it can be triggered later
           deferredPrompt = e;
-          console.log('PWA install prompt available');
+          console.log('[PWA] Install prompt captured and ready');
+          
+          // Show install notification automatically
+          setTimeout(() => {
+            showInstallNotification();
+          }, 3000);
         });
 
         // Listen for app installed event
         window.addEventListener('appinstalled', () => {
-          console.log('PWA was installed');
+          console.log('[PWA] ✅ App was installed successfully!');
           deferredPrompt = null;
           showToast('APP INSTALLED SUCCESSFULLY!');
         });
+        
+        // Debug: Check if service worker is supported
+        if ('serviceWorker' in navigator) {
+          console.log('[PWA] ✅ Service Worker supported');
+        } else {
+          console.log('[PWA] ❌ Service Worker NOT supported');
+        }
+        
+        // Debug: Check manifest
+        if (document.querySelector('link[rel="manifest"]')) {
+          console.log('[PWA] ✅ Manifest link found');
+        } else {
+          console.log('[PWA] ❌ Manifest link NOT found');
+        }
+        
+        // Debug: Check if already installed
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+          console.log('[PWA] ℹ️ App is already installed (running standalone)');
+        } else {
+          console.log('[PWA] ℹ️ App is NOT installed (running in browser)');
+        }
       }
 
       async function installPWA() {
+        console.log('[PWA] Install button clicked');
+        console.log('[PWA] deferredPrompt available:', !!deferredPrompt);
+        
         if (!deferredPrompt) {
-          // Already installed or not supported
+          // Check if already installed
           if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+            console.log('[PWA] Already installed');
             showToast('APP ALREADY INSTALLED', false);
           } else {
-            // No install prompt available - browser doesn't support it or already dismissed
-            showToast('INSTALL NOT AVAILABLE IN THIS BROWSER', true);
+            // No install prompt available
+            console.error('[PWA] No install prompt available');
+            console.log('[PWA] Possible reasons:');
+            console.log('  1. Not HTTPS (required for PWA)');
+            console.log('  2. Manifest not found/invalid');
+            console.log('  3. Service worker not registered');
+            console.log('  4. Browser doesn\'t support PWA');
+            console.log('  5. Already dismissed the prompt');
+            showToast('INSTALL NOT AVAILABLE - Check console for details', true);
           }
           return;
         }
 
         // Show the native browser install prompt
+        console.log('[PWA] Showing native install prompt...');
         deferredPrompt.prompt();
 
         // Wait for the user to respond to the prompt
         const { outcome } = await deferredPrompt.userChoice;
+        console.log('[PWA] User choice:', outcome);
         
         if (outcome === 'accepted') {
-          console.log('User accepted the install prompt');
+          console.log('[PWA] ✅ User accepted the install');
           showToast('INSTALLING APP...');
           deferredPrompt = null;
         } else {
-          console.log('User dismissed the install prompt');
+          console.log('[PWA] ❌ User dismissed the install');
           showToast('INSTALL CANCELLED', true);
         }
       }
@@ -1876,10 +1918,13 @@
 
       function registerServiceWorker() {
         if ("serviceWorker" in navigator) {
+          console.log('[PWA] Registering service worker...');
+          
           // Clear old caches
           caches.keys().then(function (names) {
             for (let name of names) {
               if (name !== "stash-v2.0") {
+                console.log('[PWA] Clearing old cache:', name);
                 caches.delete(name);
               }
             }
@@ -1889,22 +1934,25 @@
           navigator.serviceWorker
             .register("/sw.js")
             .then((registration) => {
-              console.log("[PWA] Service Worker registered:", registration.scope);
+              console.log("[PWA] ✅ Service Worker registered successfully!");
+              console.log("[PWA] Scope:", registration.scope);
               
               // Check for updates
               registration.addEventListener('updatefound', () => {
                 const newWorker = registration.installing;
+                console.log('[PWA] Update found, installing...');
                 newWorker.addEventListener('statechange', () => {
                   if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    // New version available
-                    console.log('[PWA] New version available!');
+                    console.log('[PWA] ✅ New version installed!');
                   }
                 });
               });
             })
             .catch((error) => {
-              console.log("[PWA] Service Worker registration failed:", error);
+              console.error("[PWA] ❌ Service Worker registration failed:", error);
             });
+        } else {
+          console.error('[PWA] ❌ Service Worker not supported in this browser');
         }
       }
 
