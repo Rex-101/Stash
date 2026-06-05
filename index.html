@@ -2296,11 +2296,6 @@
             }
           }
           
-          // Show note about Cloudinary
-          setTimeout(() => {
-            showToast('Note: Image removed from Stash. To free Cloudinary storage, delete manually from Cloudinary dashboard', false);
-          }, 2000);
-          
         } catch (error) {
           console.error('Delete error:', error);
           showToast('DELETE FAILED', true);
