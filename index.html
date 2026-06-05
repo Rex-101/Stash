@@ -1751,6 +1751,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
+    console.log('[INIT] Script loading...');
+    
     const SUPABASE_URL = "https://rwlsfwvtldlvhpoiylpi.supabase.co";
     const SUPABASE_KEY =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ3bHNmd3Z0bGRsdmhwb2l5bHBpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzNTYwNDcsImV4cCI6MjA5MzkzMjA0N30.qAi4YCWFml4csA3VtpdnUhniKkUi3OZTAIdI716aUNg";
@@ -1825,11 +1827,17 @@
     var deferredPrompt = null; // For PWA install prompt
 
     window.addEventListener("DOMContentLoaded", () => {
+      console.log('[INIT] DOM loaded');
+      console.log('[INIT] Supabase available:', typeof window.supabase);
       sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      console.log('[INIT] Supabase client created');
       setupEventListeners();
       setupPWAInstall();
+      populateCategoryFilters();
       checkSession();
       registerServiceWorker();
+      console.log('[INIT] Initialization complete');
+      console.log('[INIT] login function accessible:', typeof window.login);
     });
 
     // PWA Install Setup

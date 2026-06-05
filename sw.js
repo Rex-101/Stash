@@ -24,8 +24,19 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch - Network first
+// Fetch - Network first, caching GET requests except Supabase API calls
 self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
+  
+  // Only handle GET requests, http/https protocols, and ignore Supabase API calls
+  if (
+    event.request.method !== 'GET' ||
+    !url.protocol.startsWith('http') ||
+    url.hostname.includes('supabase.co')
+  ) {
+    return;
+  }
+
   event.respondWith(
     fetch(event.request)
       .then((response) => {
