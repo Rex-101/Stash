@@ -2043,7 +2043,8 @@
       function confirmDelete() {
         if (!currentDrop) return;
 
-        const confirmMsg = `Are you sure you want to delete this stash?\n\n"${currentDrop.text.substring(0, 50)}${currentDrop.text.length > 50 ? "..." : ""}"`;
+        const displayText = currentDrop.text || currentDrop.label || 'this stash';
+        const confirmMsg = `Are you sure you want to delete this stash?\n\n"${displayText.substring(0, 50)}${displayText.length > 50 ? "..." : ""}"`;
 
         if (confirm(confirmMsg)) {
           deleteDrop();
@@ -2405,6 +2406,10 @@
       async function deleteDrop() {
         if (!currentDrop) return;
 
+        // Store the drop ID before closing detail panel
+        const dropToDelete = currentDrop;
+        const dropId = currentDrop.id;
+
         // Close detail panel first so we can see the list
         closeDetail();
 
@@ -2413,7 +2418,7 @@
         let targetItem = null;
 
         dropItems.forEach((item) => {
-          if (item.getAttribute("onclick")?.includes(currentDrop.id)) {
+          if (item.getAttribute("onclick")?.includes(dropId)) {
             targetItem = item;
           }
         });
@@ -2428,7 +2433,7 @@
         const { error } = await sbClient
           .from(TABLE_NAME)
           .delete()
-          .eq("id", currentDrop.id);
+          .eq("id", dropId);
         if (error) {
           console.error("Delete error:", error);
           showToast("DELETE FAILED", true);
