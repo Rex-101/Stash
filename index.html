@@ -1110,7 +1110,7 @@
             </div>
           </a>
           <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
-            <button class="btn" id="installBtn" onclick="installPWA()" style="padding: 10px 20px; font-size: 0.85rem; display: none;">
+            <button class="btn" id="installBtn" onclick="installPWA()" style="padding: 10px 20px; font-size: 0.85rem;">
               📥 INSTALL APP
             </button>
             <span
@@ -1517,11 +1517,6 @@
           e.preventDefault();
           // Stash the event so it can be triggered later
           deferredPrompt = e;
-          // Show install button
-          const installBtn = document.getElementById('installBtn');
-          if (installBtn) {
-            installBtn.style.display = 'block';
-          }
           console.log('PWA install prompt available');
         });
 
@@ -1529,21 +1524,8 @@
         window.addEventListener('appinstalled', () => {
           console.log('PWA was installed');
           deferredPrompt = null;
-          const installBtn = document.getElementById('installBtn');
-          if (installBtn) {
-            installBtn.style.display = 'none';
-          }
           showToast('APP INSTALLED SUCCESSFULLY!');
         });
-
-        // Check if already installed
-        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-          console.log('PWA already installed');
-          const installBtn = document.getElementById('installBtn');
-          if (installBtn) {
-            installBtn.style.display = 'none';
-          }
-        }
       }
 
       async function installPWA() {
