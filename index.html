@@ -1833,7 +1833,6 @@
       console.log('[INIT] Supabase client created');
       setupEventListeners();
       setupPWAInstall();
-      populateCategoryFilters();
       checkSession();
       registerServiceWorker();
       console.log('[INIT] Initialization complete');
@@ -2616,6 +2615,21 @@
         .querySelector(`[data-filter="${type}"]`)
         .classList.add("active");
 
+      filterDrops();
+    }
+
+    function filterByCategory(categoryId) {
+      currentCategoryFilter = categoryId;
+      
+      // Update active button
+      document.querySelectorAll(".category-filter-btn").forEach((btn) => {
+        btn.classList.remove("active");
+      });
+      const activeBtn = document.querySelector(`[data-category="${categoryId}"]`);
+      if (activeBtn) {
+        activeBtn.classList.add("active");
+      }
+      
       filterDrops();
     }
 
