@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Login</title>
+</head>
+<body>
+    <h1>Login Test</h1>
+    <button onclick="login()">Test Login Button</button>
+    <div id="result"></div>
+
+    <script>
+        console.log('Script loaded');
+        
+        function login() {
+            console.log('Login function called!');
+            document.getElementById('result').textContent = 'Login function works!';
+            alert('Login function is working!');
+        }
+        
+        console.log('login function type:', typeof login);
+    </script>
+</body>
+</html>
