@@ -2019,10 +2019,9 @@
       function closeInstallInstructions() {
         document.getElementById('installInstructionsModal').style.display = 'none';
       }
-    }
 
-    // Install Notification Functions
-    function showInstallNotification() {
+      // Install Notification Functions
+      function showInstallNotification() {
       // Check if already installed
       if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
         return; // Already installed, don't show
