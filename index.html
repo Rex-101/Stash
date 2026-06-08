@@ -1326,6 +1326,10 @@
       <div class="auth-form active" id="loginForm">
         <input type="text" class="auth-input" id="loginNickname" placeholder="NICKNAME" />
         <input type="password" class="auth-input" id="loginPassword" placeholder="PASSWORD" />
+        <div style="display: flex; align-items: center; gap: 10px; margin: 10px 0; justify-content: center;">
+          <input type="checkbox" id="rememberMe" style="width: 18px; height: 18px; cursor: pointer;" />
+          <label for="rememberMe" style="color: var(--text-secondary); font-family: 'Courier Prime', monospace; font-size: 0.9rem; cursor: pointer; user-select: none;">REMEMBER ME</label>
+        </div>
         <button class="btn open-stash-btn" onclick="login()">OPEN STASH</button>
       </div>
 
@@ -2163,7 +2167,8 @@
     }
 
     function checkSession() {
-      const savedUser = sessionStorage.getItem("currentUser");
+      // Check localStorage first (Remember Me), then sessionStorage
+      const savedUser = localStorage.getItem("currentUser") || sessionStorage.getItem("currentUser");
       if (savedUser) {
         currentUser = JSON.parse(savedUser);
         showMainApp();
@@ -2241,7 +2246,8 @@
       console.log('[LOGIN] Login function called');
       const nickname = document.getElementById("loginNickname").value.trim();
       const password = document.getElementById("loginPassword").value;
-      console.log('[LOGIN] Nickname:', nickname);
+      const rememberMe = document.getElementById("rememberMe").checked;
+      console.log('[LOGIN] Nickname:', nickname, 'Remember Me:', rememberMe);
 
       if (!nickname || !password) {
         console.log('[LOGIN] Missing credentials');
@@ -2267,13 +2273,25 @@
 
       console.log('[LOGIN] Login successful!');
       currentUser = user;
-      sessionStorage.setItem("currentUser", JSON.stringify(user));
+      
+      // Store in sessionStorage (temporary) or localStorage (persistent)
+      if (rememberMe) {
+        localStorage.setItem("currentUser", JSON.stringify(user));
+        localStorage.setItem("rememberMe", "true");
+      } else {
+        sessionStorage.setItem("currentUser", JSON.stringify(user));
+        localStorage.removeItem("currentUser");
+        localStorage.removeItem("rememberMe");
+      }
+      
       startDecryption();
     }
 
     function logout() {
       currentUser = null;
       sessionStorage.removeItem("currentUser");
+      localStorage.removeItem("currentUser");
+      localStorage.removeItem("rememberMe");
       document.getElementById("mainApp").classList.remove("visible");
       document.getElementById("lockScreen").classList.remove("hidden");
       document.getElementById("loginNickname").value = "";
