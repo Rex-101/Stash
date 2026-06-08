@@ -11,7 +11,7 @@ When you install STASH on your phone, you get:
 - ✅ **Auto-updates** - Always the latest version
 - ✅ **Small size** - Only 1-2MB (vs 50MB+ for native apps)
 
----
+---if God called you at 5am, will you get on yoyur knoweed or fhef up and leave, if he aswerded you rpaterys will yoyb share his lifeir choose to hide
 
 ## 📱 iPhone/iPad Installation (iOS)
 
