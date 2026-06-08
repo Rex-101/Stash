@@ -1,5 +1,5 @@
 // STASH Service Worker - Minimal for PWA Installation
-const CACHE_NAME = 'stash-v3';
+const CACHE_NAME = 'stash-v4-landing';
 
 // Install
 self.addEventListener('install', (event) => {
