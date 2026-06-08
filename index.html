@@ -1824,6 +1824,7 @@
     var currentDrop = null;
     var currentUser = null;
     var currentFilter = "all";
+    var currentCategoryFilter = "all";
     var deferredPrompt = null; // For PWA install prompt
 
     window.addEventListener("DOMContentLoaded", () => {
@@ -2585,18 +2586,23 @@
 
       let filtered = drops;
 
-      // Apply type filter
+      // Apply type filter (all/mine/shared)
       if (currentFilter === "mine") {
         filtered = drops.filter((drop) => !drop.shared);
       } else if (currentFilter === "shared") {
         filtered = drops.filter((drop) => drop.shared);
       }
 
+      // Apply category filter
+      if (currentCategoryFilter && currentCategoryFilter !== "all") {
+        filtered = filtered.filter((drop) => (drop.category || 'general') === currentCategoryFilter);
+      }
+
       // Apply search filter
       if (searchTerm) {
         filtered = filtered.filter(
           (drop) =>
-            drop.text.toLowerCase().includes(searchTerm) ||
+            (drop.text && drop.text.toLowerCase().includes(searchTerm)) ||
             (drop.label && drop.label.toLowerCase().includes(searchTerm)),
         );
       }
