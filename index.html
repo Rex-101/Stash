@@ -1885,15 +1885,19 @@
       if (window.matchMedia('(display-mode: standalone)').matches) {
         console.log('[PWA] ℹ️ App is already installed (running standalone)');
       } else {
-        console.log('[PWA] ℹ️ Ap      async function installPWA() {
-        console.log('[PWA] Install button clicked');
+        console.log('[PWA] ℹ️ App is NOT installed (running in browser)');
+      }
+    }
 
-        // Check if already installed
-        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-          console.log('[PWA] Already installed');
-          showToast('APP ALREADY INSTALLED', false);
-          return;
-        }
+    async function installPWA() {
+      console.log('[PWA] Install button clicked');
+
+      // Check if already installed
+      if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+        console.log('[PWA] Already installed');
+        showToast('APP ALREADY INSTALLED', false);
+        return;
+      }
 
         const userAgent = navigator.userAgent || navigator.vendor || window.opera;
         const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
