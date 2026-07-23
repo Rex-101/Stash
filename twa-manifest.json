@@ -13,7 +13,7 @@
   "backgroundColor": "#000000",
   "enableNotifications": true,
   "startUrl": "stashdrop.vercel.app",
-  "iconUrl": "https://stash-topaz.vercel.app/logo.png",
+  "iconUrl": "https://stashdrop.vercel.app/logo.png",
   "splashScreenFadeOutDuration": 300,
   "signingKey": {
     "path": "C:\\Users\\pc\\OneDrive\\Desktop\\Web Projects\\DropBox\\android.keystore",
@@ -23,7 +23,7 @@
   "appVersionCode": 1,
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
-  "webManifestUrl": "https://stash-topaz.vercel.app/manifest.json",
+  "webManifestUrl": "https://stashdrop.vercel.app/manifest.json",
   "fallbackType": "customtabs",
   "features": {},
   "alphaDependencies": {
@@ -32,7 +32,7 @@
   "enableSiteSettingsShortcut": true,
   "isChromeOSOnly": false,
   "isMetaQuest": false,
-  "fullScopeUrl": "https://stash-topaz.vercel.app/",
+  "fullScopeUrl": "https://stashdrop.vercel.app/",
   "minSdkVersion": 21,
   "orientation": "portrait",
   "fingerprints": [],

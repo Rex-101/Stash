@@ -43,7 +43,7 @@ The easiest way to build your APK is through GitHub Actions:
 
 2. **Package the APK:**
    ```bash
-   pwa package https://stash-topaz.vercel.app --platform android --packageId com.rex.stash --name "STASH" --output ./build
+   pwa package https://stashdrop.vercel.app --platform android --packageId com.rex.stash --name "STASH" --output ./build
    ```
 
 3. **Find your APK:**
@@ -53,14 +53,14 @@ The easiest way to build your APK is through GitHub Actions:
 ## Method 3: Use PWABuilder Website (No Code)
 
 1. Go to https://www.pwabuilder.com/
-2. Enter your URL: `https://stash-topaz.vercel.app`
+2. Enter your URL: `https://stashdrop.vercel.app`
 3. Click "Start"
 4. Click "Package for Stores"
 5. Select "Android"
 6. Configure options:
    - Package ID: `com.rex.stash`
    - App name: `STASH`
-   - Host URL: `https://stash-topaz.vercel.app`
+   - Host URL: `https://stashdrop.vercel.app`
 7. Click "Generate"
 8. Download the APK
 
@@ -107,7 +107,7 @@ The easiest way to build your APK is through GitHub Actions:
 Your app is configured with:
 - **Package ID:** `com.rex.stash`
 - **App Name:** STASH
-- **URL:** https://stash-topaz.vercel.app
+- **URL:** https://stashdrop.vercel.app
 
 ## Installing the APK
 
