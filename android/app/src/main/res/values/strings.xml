@@ -2,6 +2,6 @@
 <resources>
     <string name="app_name">Stash</string>
     <string name="title_activity_main">Stash</string>
-    <string name="package_name">com.rexence.stash</string>
-    <string name="custom_url_scheme">com.rexence.stash</string>
+    <string name="package_name">com.stash.app</string>
+    <string name="custom_url_scheme">com.stash.app</string>
 </resources>

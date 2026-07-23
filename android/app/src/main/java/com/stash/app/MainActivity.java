@@ -1,4 +1,4 @@
-package com.rexence.stash;
+package com.stash.app;
 
 import com.getcapacitor.BridgeActivity;
 
