@@ -1,7 +1,7 @@
 {
-  "appId": "com.rex.stash",
+  "appId": "com.stash.app",
   "appName": "STASH",
-  "webDir": ".",
+  "webDir": "www",
   "server": {
     "url": "https://stash-topaz.vercel.app",
     "cleartext": true
