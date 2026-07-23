@@ -3,7 +3,7 @@
   "appName": "Stash",
   "webDir": "www",
   "server": {
-    "url": "https://stash-topaz.vercel.app",
+    "url": "https://stashdrop.vercel.app",
     "cleartext": true
   },
   "android": {
