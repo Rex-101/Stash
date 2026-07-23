@@ -2865,9 +2865,11 @@
                 <div class="drop-item" onclick="openDetail('${drop.id}')" style="border-left-color: ${categoryColor};">
                     <!-- Quick Actions -->
                     <div class="quick-actions">
+                        ${drop.text && drop.text.trim() ? `
                         <button class="quick-action-btn" onclick="event.stopPropagation(); quickCopy('${drop.id}')" title="Copy">
                             📋
                         </button>
+                        ` : ''}
                         ${!drop.shared ? `
                         <button class="quick-action-btn" onclick="event.stopPropagation(); quickShare('${drop.id}')" title="Share">
                             🔗
@@ -3041,21 +3043,50 @@
       }
 
       document.getElementById("detailText").textContent = currentDrop.text || "";
+      
+      // Hide text section if there's no text (image-only stash)
+      const detailText = document.getElementById("detailText");
+      if (!currentDrop.text || currentDrop.text.trim() === "") {
+        detailText.style.display = "none";
+      } else {
+        detailText.style.display = "block";
+      }
+      
       document.getElementById("detailDate").textContent = formatDate(
         currentDrop.created_at,
       );
 
-      // Show character and word count
+      // Show character and word count (or image indicator)
       const text = currentDrop.text || "";
       const stats = getTextStats(text);
-      document.getElementById("detailStats").textContent =
-        `${stats.charCount} CHARS | ${stats.wordCount} WORDS`;
+      const detailStats = document.getElementById("detailStats");
+      
+      if (!text.trim() && currentDrop.image_url) {
+        // Image-only stash
+        detailStats.textContent = "IMAGE STASH";
+      } else if (currentDrop.image_url && text.trim()) {
+        // Has both image and text
+        detailStats.textContent = `${stats.charCount} CHARS | ${stats.wordCount} WORDS | IMAGE`;
+      } else {
+        // Text only
+        detailStats.textContent = `${stats.charCount} CHARS | ${stats.wordCount} WORDS`;
+      }
 
       document.getElementById("shareUsername").value = "";
 
       // Reset share section to expanded state
       document.getElementById("shareContent").style.display = "block";
       document.getElementById("shareToggleIcon").textContent = "▼";
+
+      // Hide/show copy button based on whether there's text content
+      const copyBtn = document.getElementById("copyBtn");
+      if (!currentDrop.text || currentDrop.text.trim() === "") {
+        // Image-only stash - hide copy button
+        copyBtn.style.display = "none";
+      } else {
+        // Has text content - show copy button
+        copyBtn.style.display = "inline-block";
+      }
 
       // Hide share section if this is a shared drop (not owned by user)
       const shareSection = document.querySelector(".share-section");
