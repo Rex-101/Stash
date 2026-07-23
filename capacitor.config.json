@@ -1,5 +1,17 @@
 {
-  "appId": "com.stash.app",
-  "appName": "Stash",
-  "webDir": "www"
+  "appId": "com.rex.stash",
+  "appName": "STASH",
+  "webDir": ".",
+  "server": {
+    "url": "https://stash-topaz.vercel.app",
+    "cleartext": true
+  },
+  "android": {
+    "buildOptions": {
+      "keystorePath": "",
+      "keystorePassword": "",
+      "keystoreAlias": "",
+      "keystoreAliasPassword": ""
+    }
+  }
 }
